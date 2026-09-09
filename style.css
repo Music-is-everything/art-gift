@@ -779,8 +779,22 @@ footer {
 
 
     }
+   .sunflower-extra-1 { 
+        top: 28%; 
+        left: 4%; 
+        font-size: 34px; 
+        transform: rotate(-15deg);
+   }
+   
 
-    .sunflower-3 { 
+    .sunflower-extra-2{ 
+        top: 34%; 
+        right: 4%; 
+        font-size: 35px;
+        transform: rotate(15deg);
+ 
+    } 
+   .sunflower-3 { 
         top: 50%; 
         left: 1%; 
         font-size: 35px;
