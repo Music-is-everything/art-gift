@@ -1,0 +1,293 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+ 
+<head> 
+ 
+    <meta charset="UTF-8"> 
+ 
+    <meta 
+        name="viewport" 
+        content="width=device-width, initial-scale=1.0" 
+    > 
+ 
+    <meta 
+        name="description" 
+        content="A little something for you." 
+    > 
+ 
+    <title>For You</title> 
+ 
+    <link 
+        rel="stylesheet" 
+        href="style.css" 
+    > 
+ 
+</head> 
+ 
+ 
+<body> 
+     
+
+    <iframe
+        name="google-feedback-frame"
+        style="display:none;">
+    </iframe>
+
+    <main class="page"> 
+ 
+    <div class="sunflower sunflower-1" aria-hidden="true">🌻</div> 
+    <div class="sunflower sunflower-2" aria-hidden="true">🌻</div> 
+    <div class="sunflower sunflower-3" aria-hidden="true">🌻</div> 
+    <div class="sunflower sunflower-4" aria-hidden="true">🌻</div> 
+    <div class="sunflower sunflower-5" aria-hidden="true">🌻</div> 
+    <div class="sunflower sunflower-6" aria-hidden="true">🌻</div>
+    <!---->
+
+    <section class="hero">
+        <p class="top-note">
+            for you
+        </p>
+        <h1>
+            A Little <br> Something
+        </h1>
+        <p class="intro">
+            I wanted to have this.
+        </p>
+        <div class="scroll-arrow" aria-hidden="true">↓</div>
+
+    </section>
+</section>
+        <!-- ========================= 
+             MESSAGE 
+        ========================== --> 
+ 
+        <section class="intro-message"> 
+ 
+            <div class="flower-divider"> 
+                
+ 
+ 
+ 
+            </div> 
+ 
+ 
+            <p> 
+                Some things are difficult 
+                to put into words. 
+            </p> 
+ 
+ 
+            <p> 
+                So I decided to put 
+                them into art instead. 
+            </p> 
+ 
+ 
+            <p class="final-line"> 
+                Take your time. 
+            </p> 
+ 
+        </section> 
+ 
+ 
+ 
+        <!-- ========================= 
+             ARTWORK 
+        ========================== --> 
+ 
+        <section class="artwork-section"> 
+ 
+ 
+            <p class="section-label"> 
+                THE ARTWORK 
+            </p> 
+ 
+ 
+            <div class="video-container"> 
+ 
+                <video 
+                    id="art-video" 
+                    controls 
+                    playsinline 
+                    preload="metadata" 
+                > 
+ 
+                    <source 
+                        src="assets/artwork.mp4" 
+                        type="video/mp4" 
+                    > 
+ 
+                    Your browser does not support 
+                    video playback. 
+ 
+                </video> 
+ 
+            </div> 
+ 
+ 
+ 
+            <!-- VIDEO DOWNLOAD --> 
+ 
+            <a 
+                type="button"
+                class="heart-download"
+                id="download-video" 
+                aria-label="Download artwork video" 
+            > 
+ 
+                <span class="heart"> 
+                    ♥ 
+                </span> 
+ 
+                <span class="download-text"> 
+                    DOWNLOAD VIDEO 
+                </span> 
+ 
+            </a> 
+ 
+ 
+        </section> 
+ 
+ 
+ 
+        <!-- ========================= 
+             FEEDBACK 
+        ========================== --> 
+ 
+        <section class="feedback-section"> 
+ 
+ 
+            <div class="flower-divider"> 
+                
+ 
+ 
+ 
+            </div> 
+ 
+ 
+            <p class="section-label"> 
+                YOUR THOUGHTS 
+            </p> 
+ 
+ 
+            <h2> 
+                Tell me about<br> 
+                the art. 
+            </h2> 
+ 
+ 
+            <p class="feedback-intro"> 
+                Write whatever came to your mind 
+                when you saw it. 
+            </p> 
+ 
+ 
+ 
+            <!-- ===================== 
+                 FEEDBACK FORM 
+            ====================== --> 
+ 
+            <form 
+                id="feedback-form" 
+                class="feedback-form" 
+            > 
+ 
+ 
+                <textarea 
+                    id="feedback" 
+                    name="feedback" 
+                    placeholder="Write your message here..." 
+                    maxlength="2000" 
+                    required 
+                ></textarea> 
+ 
+ 
+                <div class="character-count"> 
+ 
+                    <span id="character-count"> 
+                        0 
+                    </span> 
+ 
+                    / 2000 
+ 
+                </div> 
+ 
+ 
+                <button 
+                    type="submit" 
+                    class="submit-button" 
+                    id="submit-button" 
+                > 
+                    SUBMIT 
+ 
+                </button> 
+ 
+ 
+            </form> 
+ 
+ 
+ 
+            <!-- ===================== 
+                 THANK YOU 
+            ====================== --> 
+ 
+            <div 
+                id="thank-you" 
+                class="thank-you" 
+            > 
+ 
+                <div class="thank-you-flower"> 
+                    
+ 
+ 
+ 
+                </div> 
+ 
+ 
+                <h2> 
+                    Thank you. 
+                </h2> 
+ 
+ 
+                <p> 
+                    Thank you for your feedback. 
+                </p> 
+ 
+ 
+                <p> 
+                    Your message has been received. 
+                </p> 
+ 
+ 
+            </div> 
+ 
+ 
+        </section> 
+ 
+ 
+ 
+        <!-- ========================= 
+             FOOTER 
+        ========================== --> 
+ 
+        <footer> 
+ 
+            <p> 
+                Some gifts don't need a name. 
+            </p> 
+ 
+        </footer> 
+ 
+ 
+    </main> 
+ 
+ 
+ 
+    <!-- JAVASCRIPT --> 
+ 
+    <script src="script.js"></script> 
+ 
+ 
+</body> 
+ 
+</html> 

@@ -1,0 +1,899 @@
+/* ========================================= 
+   RESET 
+========================================= */ 
+ 
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+} 
+ 
+ 
+html { 
+    scroll-behavior: smooth; 
+} 
+ 
+ 
+body { 
+ 
+    background: #0d0d0d; 
+ 
+    color: #f5f2e9; 
+ 
+    font-family: 
+        Georgia, 
+        "Times New Roman", 
+        serif; 
+ 
+    line-height: 1.6; 
+ 
+    overflow-x: hidden; 
+ 
+} 
+ 
+ 
+/* ========================================= 
+   PAGE 
+========================================= */ 
+ 
+.page { 
+ 
+    position: relative; 
+ 
+    width: 100%; 
+ 
+    max-width: 1100px; 
+ 
+    margin: 0 auto; 
+ 
+    padding: 
+        0 30px 
+        100px; 
+ 
+} 
+ 
+ 
+/* ========================================= 
+   SUNFLOWERS 
+========================================= */ 
+ 
+.sunflower { 
+ 
+    position: absolute; 
+ 
+    z-index: 0; 
+ 
+    font-size: 52px; 
+ 
+    opacity: 0.75; 
+ 
+    pointer-events: none; 
+ 
+    user-select: none; 
+ 
+} 
+ 
+ 
+/* ========================================= 
+   SUNFLOWERS 
+========================================= */ 
+ 
+.sunflower { 
+    position: absolute; 
+    z-index: 1; 
+ 
+    font-size: 52px; 
+    line-height: 1; 
+ 
+    opacity: 0.78; 
+ 
+    pointer-events: none; 
+    user-select: none; 
+ 
+    filter: drop-shadow( 
+        0 5px 10px 
+        rgba(0, 0, 0, 0.35) 
+    ); 
+} 
+ 
+ 
+/* TOP LEFT */ 
+.sunflower-1 { 
+    top: 35px; 
+    left: 2%; 
+    font-size: 55px; 
+    transform: rotate(-18deg); 
+} 
+ 
+ 
+/* TOP RIGHT */ 
+.sunflower-2 { 
+    top: 90px; 
+    right: 2%; 
+    font-size: 45px; 
+    transform: rotate(18deg); 
+} 
+ 
+ 
+/* MIDDLE LEFT */ 
+.sunflower-3 { 
+    top: 42%; 
+    left: 1%; 
+    font-size: 42px; 
+    transform: rotate(12deg); 
+} 
+ 
+ 
+/* MIDDLE RIGHT */ 
+.sunflower-4 { 
+    top: 58%; 
+    right: 1%; 
+    font-size: 60px; 
+    transform: rotate(-18deg); 
+} 
+ 
+ 
+/* LOWER LEFT */ 
+.sunflower-5 { 
+    top: 75%; 
+    left: 2%; 
+    font-size: 44px; 
+    transform: rotate(-12deg); 
+} 
+ 
+ 
+/* LOWER RIGHT */ 
+.sunflower-6 { 
+    top: 88%; 
+    right: 2%; 
+    font-size: 38px; 
+    transform: rotate(16deg); 
+} 
+ 
+ 
+/* ========================================= 
+   HERO 
+========================================= */ 
+ 
+.hero { 
+ 
+    position: relative; 
+ 
+    z-index: 1; 
+ 
+    min-height: 100vh; 
+ 
+    display: flex; 
+ 
+    flex-direction: column; 
+ 
+    align-items: center; 
+ 
+    justify-content: center; 
+ 
+    text-align: center; 
+ 
+} 
+ 
+ 
+.top-note { 
+ 
+    margin-bottom: 35px; 
+ 
+    font-family: Arial, sans-serif; 
+ 
+    font-size: 11px; 
+ 
+    letter-spacing: 7px; 
+ 
+    text-transform: uppercase; 
+ 
+    color: #d9ad32; 
+ 
+} 
+ 
+ 
+.hero h1 { 
+ 
+    font-size: 
+        clamp(55px, 10vw, 105px); 
+ 
+    line-height: 0.95; 
+ 
+    font-weight: 400; 
+ 
+    letter-spacing: -4px; 
+ 
+} 
+ 
+ 
+.intro { 
+ 
+    margin-top: 35px; 
+ 
+    font-size: 19px; 
+ 
+    color: #a9a69b; 
+ 
+} 
+ 
+ 
+.scroll-arrow { 
+ 
+    margin-top: 75px; 
+ 
+    font-family: Arial, sans-serif; 
+ 
+    font-size: 25px; 
+ 
+    color: #d9ad32; 
+ 
+    animation: 
+        floating 2s ease-in-out infinite; 
+ 
+} 
+ 
+ 
+@keyframes floating { 
+ 
+    0%, 
+    100% { 
+        transform: translateY(0); 
+    } 
+ 
+    50% { 
+        transform: translateY(8px); 
+    } 
+ 
+} 
+ 
+ 
+/* ========================================= 
+   INTRO MESSAGE 
+========================================= */ 
+ 
+.intro-message { 
+ 
+    max-width: 600px; 
+ 
+    margin: 
+        0 auto 
+        180px; 
+ 
+    text-align: center; 
+ 
+} 
+ 
+ 
+.flower-divider { 
+ 
+    margin-bottom: 55px; 
+ 
+    font-size: 25px; 
+ 
+    color: #d9ad32; 
+ 
+} 
+ 
+ 
+.intro-message p { 
+ 
+    margin-bottom: 25px; 
+ 
+    font-size: 21px; 
+ 
+    color: #c3c0b6; 
+ 
+} 
+ 
+ 
+.intro-message .final-line { 
+ 
+    margin-top: 45px; 
+ 
+    color: #e6e2d7; 
+ 
+    font-style: italic; 
+ 
+} 
+ 
+ 
+/* ========================================= 
+   SECTION LABEL 
+========================================= */ 
+ 
+.section-label { 
+ 
+    margin-bottom: 25px; 
+ 
+    font-family: Arial, sans-serif; 
+ 
+    font-size: 10px; 
+ 
+    letter-spacing: 5px; 
+ 
+    text-transform: uppercase; 
+ 
+    color: #8f8c82; 
+ 
+} 
+ 
+ 
+/* ========================================= 
+   ARTWORK 
+========================================= */ 
+ 
+.artwork-section { 
+ 
+    max-width: 800px; 
+ 
+    margin: 
+        0 auto 
+        180px; 
+ 
+    text-align: center; 
+ 
+} 
+ 
+ 
+.video-container { 
+ 
+    width: 100%; 
+ 
+    background: #000; 
+ 
+    overflow: hidden; 
+ 
+    border-radius: 14px; 
+ 
+    box-shadow: 
+        0 25px 80px 
+        rgba(0, 0, 0, 0.5); 
+ 
+} 
+ 
+ 
+.video-container video { 
+ 
+    display: block; 
+ 
+    width: 100%; 
+ 
+    height: auto; 
+ 
+} 
+ 
+ 
+/* ========================================= 
+   HEART DOWNLOAD 
+========================================= */ 
+ 
+.heart-download { 
+ 
+    display: inline-flex; 
+ 
+    flex-direction: column; 
+ 
+    align-items: center; 
+ 
+    justify-content: center; 
+ 
+    margin-top: 35px; 
+    
+    border: none;
+
+    background: transparent;
+ 
+    cursor: pointer; 
+ 
+    color: #fff; 
+ 
+} 
+ 
+ 
+.heart { 
+ 
+    display: flex; 
+ 
+    align-items: center; 
+ 
+    justify-content: center; 
+ 
+    width: 82px; 
+ 
+    height: 82px; 
+ 
+    font-family: Arial, sans-serif; 
+ 
+    font-size: 58px; 
+ 
+    color: #e63946; 
+
+    filter:
+        drop-shadow(
+            0 8px 18px
+            rgba(230, 57, 70, 0.25)
+        );
+ 
+    transition: 
+        transform 0.2s ease, 
+        filter 0.2s ease; 
+ 
+} 
+ 
+ 
+.heart-download:hover .heart { 
+ 
+    transform: 
+        scale(1.12); 
+ 
+    filter: 
+        drop-shadow( 
+            0 0 18px 
+            rgba(230, 57, 70, 0.55) 
+        ); 
+ 
+} 
+ 
+.heart-download:active .heart {
+    transform: scale(0.95);
+}
+.download-text { 
+ 
+    margin-top: 3px; 
+ 
+    font-family: Arial, sans-serif; 
+ 
+    font-size: 9px; 
+ 
+    letter-spacing: 3px; 
+ 
+    color: #aaa79d; 
+ 
+} 
+ 
+ 
+/* ========================================= 
+   FEEDBACK 
+========================================= */ 
+ 
+.feedback-section { 
+ 
+    max-width: 650px; 
+ 
+    margin: 
+        0 auto; 
+ 
+    text-align: center; 
+ 
+} 
+ 
+ 
+.feedback-section h2 { 
+ 
+    font-size: 
+        clamp(42px, 7vw, 68px); 
+ 
+    line-height: 1.05; 
+ 
+    font-weight: 400; 
+ 
+    letter-spacing: -2px; 
+ 
+} 
+ 
+ 
+.feedback-intro { 
+ 
+    max-width: 470px; 
+ 
+    margin: 
+        30px auto 
+        50px; 
+ 
+    color: #929087; 
+ 
+    font-size: 17px; 
+ 
+} 
+ 
+ 
+/* ========================================= 
+   FORM 
+========================================= */ 
+ 
+.feedback-form { 
+ 
+    width: 100%; 
+ 
+    text-align: left; 
+ 
+} 
+ 
+ 
+textarea { 
+ 
+    display: block; 
+ 
+    width: 100%; 
+ 
+    min-height: 210px; 
+ 
+    padding: 22px; 
+ 
+    resize: vertical; 
+ 
+    border: 
+        1px solid #303030; 
+ 
+    border-radius: 8px; 
+ 
+    outline: none; 
+ 
+    background: #050505; 
+ 
+    color: #ffffff; 
+ 
+    font-family: 
+        Georgia, 
+        "Times New Roman", 
+        serif; 
+ 
+    font-size: 17px; 
+ 
+    line-height: 1.6; 
+ 
+    transition: 
+        border-color 0.2s ease, 
+        box-shadow 0.2s ease; 
+ 
+} 
+ 
+ 
+textarea::placeholder { 
+ 
+    color: #66645e; 
+ 
+} 
+ 
+ 
+textarea:focus { 
+ 
+    border-color: #555; 
+ 
+    box-shadow: 
+        0 0 0 2px 
+        rgba(255,255,255,0.03); 
+ 
+} 
+ 
+ 
+/* ========================================= 
+   CHARACTER COUNT 
+========================================= */ 
+ 
+.character-count { 
+ 
+    margin-top: 10px; 
+ 
+    text-align: right; 
+ 
+    font-family: Arial, sans-serif; 
+ 
+    font-size: 10px; 
+ 
+    color: #55534e; 
+ 
+} 
+ 
+ 
+/* ========================================= 
+   SUBMIT BUTTON 
+========================================= */ 
+ 
+.submit-button { 
+ 
+    display: block; 
+ 
+    width: 150px; 
+ 
+    height: 52px; 
+ 
+    margin: 
+        22px auto 
+        0; 
+ 
+    border: none; 
+ 
+    border-radius: 5px; 
+ 
+    background: #1479e8; 
+ 
+    color: #ffffff; 
+ 
+    cursor: pointer; 
+ 
+    font-family: Arial, sans-serif; 
+ 
+    font-size: 11px; 
+ 
+    font-weight: bold; 
+ 
+    letter-spacing: 3px; 
+ 
+    transition: 
+        background 0.2s ease, 
+        transform 0.15s ease; 
+ 
+} 
+ 
+ 
+.submit-button:hover { 
+ 
+    background: #0c68cf; 
+ 
+    transform: 
+        translateY(-2px); 
+ 
+} 
+ 
+ 
+.submit-button:active { 
+ 
+    transform: 
+        translateY(0); 
+ 
+} 
+ 
+ 
+.submit-button:disabled { 
+ 
+    opacity: 0.6; 
+ 
+    cursor: wait; 
+ 
+} 
+ 
+ 
+/* ========================================= 
+   THANK YOU 
+========================================= */ 
+ 
+.thank-you { 
+ 
+    display: none; 
+ 
+    padding: 
+        70px 25px; 
+ 
+    margin-top: 30px; 
+ 
+    border: 
+        1px solid #292929; 
+ 
+    border-radius: 10px; 
+ 
+    background: #111111; 
+ 
+} 
+ 
+ 
+.thank-you-flower { 
+ 
+    margin-bottom: 20px; 
+ 
+    font-size: 42px; 
+ 
+} 
+ 
+ 
+.thank-you h2 { 
+ 
+    margin-bottom: 18px; 
+ 
+    font-size: 48px; 
+ 
+    font-weight: 400; 
+ 
+} 
+ 
+ 
+.thank-you p { 
+ 
+    margin-top: 8px; 
+ 
+    color: #929087; 
+ 
+} 
+ 
+ 
+/* ========================================= 
+   FOOTER 
+========================================= */ 
+ 
+footer { 
+ 
+    margin-top: 200px; 
+ 
+    text-align: center; 
+ 
+    color: #4d4b46; 
+ 
+    font-size: 12px; 
+ 
+} 
+ 
+ 
+/* ========================================= 
+   MOBILE 
+========================================= */ 
+ 
+@media (max-width: 600px) { 
+ 
+    .page { 
+ 
+        padding: 
+            0 18px 
+            70px; 
+ 
+    } 
+
+
+ 
+ 
+    .sunflower { 
+
+ 
+        position: absolute;
+        z-index: 0;
+        font-size: 45px; 
+        
+ 
+        opacity: 0.75; 
+        pointer-events: none;
+        user-select: none;
+        
+        filter:
+            drop-shadow(
+                0 5px 10px
+                rgba(0, 0, 0.25)
+            );   
+ 
+    } 
+ 
+ 
+    .sunflower-1 { 
+ 
+        top: 40px; 
+        left: 4%; 
+        transform: rotate(-18deg);
+ 
+    } 
+ 
+ 
+    .sunflower-2 { 
+        top: 95px; 
+        right: 5%; 
+        font-size: 38px; 
+        transform: rotate(20deg);
+
+
+    }
+
+    .sunflower-3 { 
+        top: 48%; 
+        left: 1%; 
+        font-size: 35px;
+        transform: rotate(15deg);
+ 
+    } 
+ 
+ 
+    .sunflower-4 { 
+ 
+        top: 55%; 
+        right: 1%; 
+        font-size: 48px; 
+        transform: rotate(-20deg);
+
+    } 
+
+    .sunflower-5 { 
+        top: 78%; 
+        left: 4%; 
+        font-size: 40px;
+        transform: rotate(-12deg);
+ 
+    } 
+ 
+ 
+    .sunflower-6 { 
+ 
+        top: 88%; 
+        right: 4%; 
+        font-size: 34px; 
+        transform: rotate(18deg);
+
+    } 
+
+
+ 
+ 
+    .hero h1 { 
+ 
+        letter-spacing: -2px; 
+ 
+    } 
+ 
+ 
+    .intro { 
+ 
+        font-size: 17px; 
+ 
+    } 
+ 
+ 
+    .intro-message { 
+ 
+        margin-bottom: 120px; 
+ 
+    } 
+ 
+ 
+    .intro-message p { 
+ 
+        font-size: 18px; 
+ 
+    } 
+ 
+ 
+    .artwork-section { 
+ 
+        margin-bottom: 120px; 
+ 
+    } 
+ 
+ 
+    .video-container { 
+ 
+        border-radius: 10px; 
+ 
+    } 
+ 
+ 
+    .heart { 
+ 
+        width: 70px; 
+ 
+        height: 70px; 
+ 
+        font-size: 39px; 
+ 
+    } 
+ 
+ 
+    textarea { 
+ 
+        min-height: 190px; 
+ 
+        font-size: 16px; 
+ 
+    } 
+ 
+ 
+    .submit-button { 
+ 
+        width: 140px; 
+ 
+        height: 50px; 
+ 
+    } 
+ 
+ 
+    footer { 
+ 
+        margin-top: 130px; 
+ 
+    } 
+ 
+} 
