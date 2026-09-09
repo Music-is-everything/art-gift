@@ -1,3 +1,47 @@
+/* ========================================= 
+   PASSWORD PROTECTION 
+========================================= */ 
+ 
+const passwordForm = 
+    document.getElementById("password-form"); 
+ 
+const passwordInput = 
+    document.getElementById("password-input"); 
+ 
+const passwordScreen = 
+    document.getElementById("password-screen"); 
+ 
+const passwordError = 
+    document.getElementById("password-error"); 
+ 
+const correctPassword = "sunflower"; 
+ 
+ 
+passwordForm.addEventListener("submit", function (e) { 
+ 
+    e.preventDefault(); 
+ 
+    const enteredPassword = 
+        passwordInput.value.trim(); 
+ 
+    if (enteredPassword === correctPassword) { 
+ 
+        passwordScreen.style.display = "none"; 
+ 
+        document.body.style.overflowX = "hidden"; 
+ 
+    } else { 
+ 
+        passwordError.textContent = 
+            "That's not the password. Try again."; 
+ 
+        passwordInput.value = ""; 
+ 
+        passwordInput.focus(); 
+ 
+    } 
+ 
+}); 
 const form = 
     document.getElementById("feedback-form"); 
  
