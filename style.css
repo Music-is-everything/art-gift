@@ -923,16 +923,22 @@ footer {
    PASSWORD SCREEN 
 ========================================= */ 
  
+/* ========================================= 
+   FULL SCREEN PASSWORD LOCK 
+========================================= */ 
+ 
 .password-screen { 
     position: fixed; 
-    top: 0; 
-    left: 0;
-
-    width: 100vw;
-    height: 100vh:
-    height: 100dvh;
-   
-    z-index: 99999; 
+ 
+    top: -5px; 
+    left: -5px; 
+ 
+    width: calc(100vw + 10px); 
+    height: calc(100vh + 10px); 
+ 
+    min-height: 100dvh; 
+ 
+    z-index: 9999999; 
  
     display: flex; 
     align-items: center; 
@@ -940,31 +946,32 @@ footer {
  
     padding: 25px; 
  
-    background: #0d0d0d; 
-
-    overflow: hidden;
+    background: #0d0d0d !important; 
+ 
+    overflow: hidden; 
  
     text-align: center; 
-
-    isolation: isolate;
+ 
+    isolation: isolate; 
 } 
  
 .password-screen.hidden { 
     display: none !important; 
-} 
-
-body.password-locked {
-   overflow: hidden !important;
-   height: 100vh;
-   height: 100dvh:
-   position: fixed;
-   width: 100%;
 }
-
-html.password-locked {
-      overflow: hidden !important;
-}      
  
+html, 
+body { 
+background: #0d0d0d; 
+} 
+body.password-locked { 
+overflow: hidden !important; 
+position: fixed !important; 
+top: 0; 
+left: 0; 
+width: 100% !important; 
+height: 100% !important; 
+background: #0d0d0d !important; 
+} 
 .password-box { 
     width: 100%; 
     max-width: 420px; 
