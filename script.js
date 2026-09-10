@@ -1,3 +1,58 @@
+document.addEventListener("DOMContentLoaded", function () { 
+ 
+    const passwordScreen = 
+        document.getElementById("password-screen"); 
+ 
+    const passwordForm = 
+        document.getElementById("password-form"); 
+ 
+    const passwordInput = 
+        document.getElementById("password-input"); 
+ 
+    const passwordError = 
+        document.getElementById("password-error"); 
+ 
+    const correctPassword = "sunflower"; 
+ 
+ 
+    /* LOCK BACKGROUND PAGE */ 
+    document.body.classList.add("password-locked"); 
+    document.documentElement.classList.add("password-locked"); 
+ 
+ 
+    passwordForm.addEventListener("submit", function (event) { 
+ 
+        event.preventDefault(); 
+        event.stopPropagation(); 
+ 
+        const enteredPassword = 
+            passwordInput.value.trim(); 
+ 
+        if (enteredPassword === correctPassword) { 
+ 
+            passwordScreen.classList.add("hidden"); 
+ 
+            document.body.classList.remove("password-locked"); 
+            document.documentElement.classList.remove("password-locked"); 
+ 
+            setTimeout(function () { 
+                passwordScreen.remove(); 
+            }, 100); 
+ 
+            passwordInput.value = ""; 
+ 
+        } else { 
+ 
+            passwordError.textContent = 
+                "That's not the password. Try again."; 
+ 
+            passwordInput.value = ""; 
+            passwordInput.focus(); 
+        } 
+ 
+    }); 
+ 
+}); 
 /* ========================================= 
    PASSWORD PROTECTION 
 ========================================= */ 
