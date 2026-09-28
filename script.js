@@ -19,19 +19,23 @@ document.addEventListener("DOMContentLoaded", function () {
     const correctPassword = "sunflower";
 
 
-    /* LOCK BACKGROUND PAGE */
+    /* Make sure password elements exist */
 
     if (!passwordScreen || !passwordForm || !passwordInput) {
+        console.error("Password elements not found.");
         return;
     }
+
+
+    /* Lock the main page */
 
     document.body.classList.add("password-locked");
     document.documentElement.classList.add("password-locked");
 
 
     /* =========================================
-       PASSWORD FORM
-       ENTER KEY WORKS
+       PASSWORD SUBMIT
+       Works with button AND ENTER key
     ========================================= */
 
     passwordForm.addEventListener("submit", function (event) {
@@ -46,12 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (enteredPassword === correctPassword) {
 
-            /* Hide password screen */
-
-            passwordScreen.classList.add("hidden");
-
-
-            /* Unlock background page */
+            /* Unlock the page */
 
             document.body.classList.remove(
                 "password-locked"
@@ -62,7 +61,12 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
 
-            /* Remove password screen completely */
+            /* Hide password screen */
+
+            passwordScreen.classList.add("hidden");
+
+
+            /* Remove password screen */
 
             setTimeout(function () {
 
@@ -73,14 +77,10 @@ document.addEventListener("DOMContentLoaded", function () {
             }, 100);
 
 
-            /* Clear password */
-
             passwordInput.value = "";
 
 
         } else {
-
-            /* Wrong password */
 
             if (passwordError) {
 
