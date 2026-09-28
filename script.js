@@ -279,49 +279,6 @@ if (form && feedback && submitButton) {
         let beaconSent = false;
 
 
-        try {
-
-            if (
-                navigator.sendBeacon &&
-                typeof Blob !== "undefined"
-            ) {
-                const formData =
-                    new FormData();
-                formData.append(
-                    "message",
-                    message
-                );
-                formData.append(
-                    "visitorId",
-                    visitorId
-                );
-                const blob =
-                    new Blob(
-                        [new URLSearchParams(formData).toString()],
-                        {
-                            type: 
-                                "application/x-www-form-urlencoded"
-                        }
-                    );
-
-                beaconSent =
-                    navigator.sendBeacon(
-                        FEEDBACK_URL,
-                        blob
-                    );
-
-            }
-
-        } catch (error) {
-
-            console.log(
-                "Beacon failed. Using form fallback.",
-                error
-            );
-
-            beaconSent = false;
-        }
-
 
         /*
          * =====================================
