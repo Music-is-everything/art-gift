@@ -298,9 +298,9 @@ if (form && feedback && submitButton) {
                 const blob =
                     new Blob(
                         [new URLSearchParams(formData).toString()],
-        {
-            type:
-                "application/x-www-form-urlencoded"
+                        {
+                            type: 
+                                "application/x-www-form-urlencoded"
         }
     );
 
