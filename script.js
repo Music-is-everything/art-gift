@@ -1,27 +1,4 @@
-/* =========================================
-   ANONYMOUS VISITOR ID
-========================================= */
 
-function getVisitorId() {
-
-  let visitorId =
-    localStorage.getItem("artVisitorId");
-
-  if (!visitorId) {
-
-    visitorId =
-      "VIS-" + crypto.randomUUID();
-
-    localStorage.setItem(
-      "artVisitorId",
-      visitorId
-    );
-  }
-
-  return visitorId;
-}
-
-const visitorId = getVisitorId();
 /* =========================================
    PASSWORD PROTECTION
 ========================================= */
@@ -123,7 +100,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
+/* =========================================
+   ANONYMOUS VISITOR ID
+========================================= */
 
+function getVisitorId() {
+  try {
+    let visitorId = localStorage.getItem("artVisitorId");
+
+    if (!visitorId) {
+      if (window.crypto && crypto.randomUUID) {
+        visitorId = "VIS-" + crypto.randomUUID();
+      } else {
+        visitorId =
+          "VIS-" +
+          Date.now() +
+          "-" +
+          Math.random().toString(36).substring(2, 10);
+      }
+
+      localStorage.setItem("artVisitorId", visitorId);
+    }
+
+    return visitorId;
+
+  } catch (error) {
+    // If localStorage is blocked, don't stop the website
+    return "VIS-" + Date.now();
+  }
+}
 /* =========================================
    FEEDBACK SYSTEM
 ========================================= */
