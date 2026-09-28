@@ -92,15 +92,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (enteredPassword === correctPassword) {
 
-            /* Hide password screen completely */
             passwordScreen.classList.add("hidden");
 
-            /* Remove it from the page */
             setTimeout(function () {
                 passwordScreen.remove();
             }, 100);
 
-            /* Clear password */
             passwordInput.value = "";
 
         } else {
@@ -148,6 +145,70 @@ const FEEDBACK_URL =
 
 
 /* =========================================
+   ANONYMOUS VISITOR ID
+========================================= */
+
+/*
+ * Creates one random ID for this browser.
+ *
+ * It does NOT collect:
+ * - name
+ * - phone number
+ * - IMEI
+ * - phone serial number
+ *
+ * The same browser normally keeps the same ID
+ * unless its site data is cleared.
+ */
+
+function getVisitorId() {
+
+    const storageKey = "art_gift_visitor_id";
+
+    let visitorId =
+        localStorage.getItem(storageKey);
+
+
+    if (!visitorId) {
+
+        if (
+            window.crypto &&
+            crypto.randomUUID
+        ) {
+
+            visitorId =
+                "V-" +
+                crypto.randomUUID();
+
+        } else {
+
+            visitorId =
+                "V-" +
+                Date.now().toString(36) +
+                "-" +
+                Math.random()
+                    .toString(36)
+                    .substring(2, 10);
+
+        }
+
+
+        localStorage.setItem(
+            storageKey,
+            visitorId
+        );
+
+    }
+
+
+    return visitorId;
+}
+
+
+const visitorId = getVisitorId();
+
+
+/* =========================================
    CHARACTER COUNTER
 ========================================= */
 
@@ -167,8 +228,126 @@ if (feedback && characterCount) {
 
 
 /* =========================================
-   FORM SUBMISSION
-   CROSS-BROWSER VERSION
+   RELIABLE FEEDBACK SUBMISSION
+========================================= */
+
+let feedbackWaiting = false;
+
+let feedbackTimeout = null;
+
+let feedbackIframe = null;
+
+let feedbackSubmitForm = null;
+
+
+/* =========================================
+   LISTEN FOR GOOGLE SHEETS CONFIRMATION
+========================================= */
+
+window.addEventListener("message", function (event) {
+
+    if (!feedbackWaiting) {
+        return;
+    }
+
+
+    if (
+        event.data &&
+        event.data.type === "ART_FEEDBACK_SAVED"
+    ) {
+
+        finishFeedbackSubmission(true);
+
+    }
+
+});
+
+
+/* =========================================
+   FINISH FEEDBACK
+========================================= */
+
+function finishFeedbackSubmission(success) {
+
+    if (!feedbackWaiting) {
+        return;
+    }
+
+    feedbackWaiting = false;
+
+
+    if (feedbackTimeout) {
+
+        clearTimeout(feedbackTimeout);
+
+        feedbackTimeout = null;
+
+    }
+
+
+    if (feedbackSubmitForm) {
+
+        feedbackSubmitForm.remove();
+
+        feedbackSubmitForm = null;
+
+    }
+
+
+    if (feedbackIframe) {
+
+        feedbackIframe.remove();
+
+        feedbackIframe = null;
+
+    }
+
+
+    submitButton.disabled = false;
+
+    submitButton.textContent = "SUBMIT";
+
+
+    if (success) {
+
+        feedback.value = "";
+
+
+        if (characterCount) {
+
+            characterCount.textContent = "0";
+
+        }
+
+
+        form.style.display = "none";
+
+
+        thankYou.style.display = "block";
+
+
+        thankYou.scrollIntoView({
+
+            behavior: "smooth",
+
+            block: "center"
+
+        });
+
+
+    } else {
+
+        alert(
+            "We couldn't confirm that your message was received. Please try submitting again."
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   SUBMIT FEEDBACK
 ========================================= */
 
 if (form && feedback && submitButton) {
@@ -176,15 +355,17 @@ if (form && feedback && submitButton) {
     form.addEventListener("submit", function (e) {
 
         e.preventDefault();
-        e.stopPropagation();
 
 
-        /* Get message */
+        if (feedbackWaiting) {
+            return;
+        }
+
+
         const message =
             feedback.value.trim();
 
 
-        /* Do not submit empty messages */
         if (!message) {
 
             alert(
@@ -194,297 +375,181 @@ if (form && feedback && submitButton) {
             feedback.focus();
 
             return;
-        }
 
-
-        /* Prevent double tapping */
-        if (submitButton.disabled) {
-            return;
         }
 
 
         submitButton.disabled = true;
-        submitButton.textContent = "SENDING...";
 
+        submitButton.textContent =
+            "SENDING...";
 
-        /*
-         * =====================================
-         * METHOD 1
-         * navigator.sendBeacon
-         *
-         * This is very reliable on modern
-         * Android, iPhone, Safari and Chrome.
-         * =====================================
-         */
 
-        let beaconSent = false;
+        feedbackWaiting = true;
 
 
-        try {
+        /* =====================================
+           CREATE HIDDEN IFRAME
+        ===================================== */
 
-            if (
-                navigator.sendBeacon &&
-                typeof Blob !== "undefined"
-            ) {
+        feedbackIframe =
+            document.createElement("iframe");
 
-                const formData =
-                    new URLSearchParams();
 
-                formData.append(
-                    "message",
-                    message
-                );
+        feedbackIframe.name =
+            "feedback-submit-" +
+            Date.now();
 
 
-                const blob =
-                    new Blob(
-                        [formData.toString()],
-                        {
-                            type:
-                                "application/x-www-form-urlencoded"
-                        }
-                    );
+        feedbackIframe.title =
+            "Feedback submission";
 
 
-                beaconSent =
-                    navigator.sendBeacon(
-                        FEEDBACK_URL,
-                        blob
-                    );
+        feedbackIframe.style.position =
+            "fixed";
 
-            }
+        feedbackIframe.style.width =
+            "1px";
 
-        } catch (error) {
+        feedbackIframe.style.height =
+            "1px";
 
-            console.log(
-                "Beacon failed. Using form fallback.",
-                error
-            );
+        feedbackIframe.style.left =
+            "-10000px";
 
-            beaconSent = false;
-        }
+        feedbackIframe.style.top =
+            "-10000px";
 
+        feedbackIframe.style.border =
+            "0";
 
-        /*
-         * =====================================
-         * METHOD 2
-         * NORMAL HTML FORM FALLBACK
-         *
-         * This works on browsers where
-         * sendBeacon is unavailable.
-         * =====================================
-         */
+        feedbackIframe.style.opacity =
+            "0";
 
-        if (!beaconSent) {
-
-            try {
-
-                /*
-                 * Create hidden iframe.
-                 * The browser handles the POST
-                 * natively instead of JavaScript
-                 * fetch/XHR.
-                 */
-
-                const iframe =
-                    document.createElement("iframe");
-
-                iframe.name =
-                    "feedback-submit-frame";
-
-                iframe.style.display =
-                    "none";
-
-                iframe.setAttribute(
-                    "aria-hidden",
-                    "true"
-                );
-
-                document.body.appendChild(
-                    iframe
-                );
-
-
-                /*
-                 * Create native HTML form.
-                 */
-
-                const submitForm =
-                    document.createElement("form");
-
-                submitForm.method =
-                    "POST";
-
-                submitForm.action =
-                    FEEDBACK_URL;
-
-                submitForm.target =
-                    "feedback-submit-frame";
-
-                submitForm.style.display =
-                    "none";
-
-
-                /*
-                 * Create message field.
-                 */
-
-                const messageInput =
-                    document.createElement("input");
-
-                messageInput.type =
-                    "hidden";
-
-                messageInput.name =
-                    "message";
-
-                messageInput.value =
-                    message;
-
-
-                submitForm.appendChild(
-                    messageInput
-                );
-
-                document.body.appendChild(
-                    submitForm
-                );
-
-
-                /*
-                 * Native browser submission.
-                 */
-
-                submitForm.submit();
-
-
-                /*
-                 * Clean up after enough time
-                 * for slow mobile networks.
-                 */
-
-                setTimeout(
-                    function () {
-
-                        if (
-                            submitForm &&
-                            submitForm.parentNode
-                        ) {
-
-                            submitForm.remove();
-
-                        }
-
-
-                        if (
-                            iframe &&
-                            iframe.parentNode
-                        ) {
-
-                            iframe.remove();
-
-                        }
-
-                    },
-                    10000
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    "Feedback fallback failed:",
-                    error
-                );
-
-                submitButton.disabled =
-                    false;
-
-                submitButton.textContent =
-                    "SUBMIT";
-
-                alert(
-                    "The message could not be sent. Please check your internet connection and try again."
-                );
-
-                return;
-            }
-
-        }
-
-
-        /*
-         * =====================================
-         * SHOW THANK YOU
-         *
-         * Do NOT wait only 2 seconds for
-         * the Apps Script page to load.
-         *
-         * The browser has already handed the
-         * request to the network using Beacon,
-         * or submitted the native form.
-         * =====================================
-         */
-
-        setTimeout(
-            function () {
-
-                /*
-                 * Clear message
-                 */
-
-                feedback.value = "";
-
-
-                if (characterCount) {
-
-                    characterCount.textContent =
-                        "0";
-
-                }
-
-
-                /*
-                 * Hide form
-                 */
-
-                form.style.display =
-                    "none";
-
-
-                /*
-                 * Show thank-you
-                 */
-
-                if (thankYou) {
-
-                    thankYou.style.display =
-                        "block";
-
-
-                    /*
-                     * Scroll only if supported.
-                     * Older browsers won't break.
-                     */
-
-                    try {
-
-                        thankYou.scrollIntoView({
-                            behavior: "smooth",
-                            block: "center"
-                        });
-
-                    } catch (error) {
-
-                        thankYou.scrollIntoView();
-
-                    }
-
-                }
-
-            },
-            1500
+        feedbackIframe.setAttribute(
+            "aria-hidden",
+            "true"
         );
+
+
+        document.body.appendChild(
+            feedbackIframe
+        );
+
+
+        /* =====================================
+           CREATE NATIVE HTML FORM
+        ===================================== */
+
+        feedbackSubmitForm =
+            document.createElement("form");
+
+
+        feedbackSubmitForm.method =
+            "POST";
+
+
+        feedbackSubmitForm.action =
+            FEEDBACK_URL;
+
+
+        feedbackSubmitForm.target =
+            feedbackIframe.name;
+
+
+        feedbackSubmitForm.style.position =
+            "fixed";
+
+        feedbackSubmitForm.style.width =
+            "1px";
+
+        feedbackSubmitForm.style.height =
+            "1px";
+
+        feedbackSubmitForm.style.left =
+            "-10000px";
+
+        feedbackSubmitForm.style.top =
+            "-10000px";
+
+        feedbackSubmitForm.style.opacity =
+            "0";
+
+
+        /* =====================================
+           MESSAGE FIELD
+        ===================================== */
+
+        const messageInput =
+            document.createElement("input");
+
+
+        messageInput.type =
+            "hidden";
+
+
+        messageInput.name =
+            "message";
+
+
+        messageInput.value =
+            message;
+
+
+        feedbackSubmitForm.appendChild(
+            messageInput
+        );
+
+
+        /* =====================================
+           VISITOR ID FIELD
+        ===================================== */
+
+        const visitorInput =
+            document.createElement("input");
+
+
+        visitorInput.type =
+            "hidden";
+
+
+        visitorInput.name =
+            "visitorId";
+
+
+        visitorInput.value =
+            visitorId;
+
+
+        feedbackSubmitForm.appendChild(
+            visitorInput
+        );
+
+
+        document.body.appendChild(
+            feedbackSubmitForm
+        );
+
+
+        /* =====================================
+           NATIVE SUBMISSION
+        ===================================== */
+
+        HTMLFormElement.prototype.submit.call(
+            feedbackSubmitForm
+        );
+
+
+        /* =====================================
+           SAFETY TIMEOUT
+        ===================================== */
+
+        feedbackTimeout =
+            setTimeout(function () {
+
+                finishFeedbackSubmission(false);
+
+            }, 15000);
 
     });
 
@@ -499,93 +564,101 @@ const downloadVideo =
     document.getElementById("download-video");
 
 
-downloadVideo.addEventListener(
-    "click",
-    async function () {
+if (downloadVideo) {
 
-        try {
+    downloadVideo.addEventListener(
+        "click",
+        async function () {
 
-            downloadVideo.disabled = true;
+            try {
 
-            const originalText =
-                downloadVideo.querySelector(
-                    ".download-text"
+                downloadVideo.disabled = true;
+
+
+                const originalText =
+                    downloadVideo.querySelector(
+                        ".download-text"
+                    );
+
+
+                originalText.textContent =
+                    "DOWNLOADING...";
+
+
+                const response =
+                    await fetch(
+                        "assets/artwork.mp4"
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Video could not be found."
+                    );
+
+                }
+
+
+                const blob =
+                    await response.blob();
+
+
+                const url =
+                    URL.createObjectURL(blob);
+
+
+                const link =
+                    document.createElement("a");
+
+
+                link.href = url;
+
+                link.download =
+                    "artwork.mp4";
+
+
+                document.body.appendChild(link);
+
+                link.click();
+
+                link.remove();
+
+
+                URL.revokeObjectURL(url);
+
+
+                originalText.textContent =
+                    "VIDEO DOWNLOADED";
+
+
+            } catch (error) {
+
+                console.error(error);
+
+
+                alert(
+                    "The video could not be downloaded. Please try again."
                 );
 
-            originalText.textContent =
-                "DOWNLOADING...";
+
+                const originalText =
+                    downloadVideo.querySelector(
+                        ".download-text"
+                    );
 
 
-            const response =
-                await fetch(
-                    "assets/artwork.mp4"
-                );
+                originalText.textContent =
+                    "DOWNLOAD VIDEO";
 
 
-            if (!response.ok) {
+            } finally {
 
-                throw new Error(
-                    "Video could not be found."
-                );
+                downloadVideo.disabled = false;
 
             }
 
-
-            const blob =
-                await response.blob();
-
-
-            const url =
-                URL.createObjectURL(blob);
-
-
-            const link =
-                document.createElement("a");
-
-
-            link.href = url;
-
-            link.download =
-                "artwork.mp4";
-
-
-            document.body.appendChild(link);
-
-            link.click();
-
-            link.remove();
-
-
-            URL.revokeObjectURL(url);
-
-
-            originalText.textContent =
-                "VIDEO DOWNLOADED";
-
-
-        } catch (error) {
-
-            console.error(error);
-
-            alert(
-                "The video could not be downloaded. Please try again."
-            );
-
-
-            const originalText =
-                downloadVideo.querySelector(
-                    ".download-text"
-                );
-
-            originalText.textContent =
-                "DOWNLOAD VIDEO";
-
-
-        } finally {
-
-            downloadVideo.disabled = false;
-
         }
+    );
 
-    }
-);
+}
