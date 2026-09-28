@@ -1,18 +1,4 @@
-/* =========================================
-   ART GIFT WEBSITE - COMPLETE SCRIPT
-========================================= */
-
-
-/* =========================================
-   WAIT UNTIL HTML IS READY
-========================================= */
-
 document.addEventListener("DOMContentLoaded", function () {
-
-
-    /* =========================================
-       PASSWORD PROTECTION
-    ========================================= */
 
     const passwordScreen =
         document.getElementById("password-screen");
@@ -26,840 +12,580 @@ document.addEventListener("DOMContentLoaded", function () {
     const passwordError =
         document.getElementById("password-error");
 
-    const correctPassword =
-        "sunflower";
+    const correctPassword = "sunflower";
 
 
-    /*
-     * Password elements must exist.
-     * If they don't, don't stop the rest
-     * of the website.
-     */
-
-    if (
-        passwordScreen &&
-        passwordForm &&
-        passwordInput
-    ) {
-
-        /* Lock website */
-        document.body.classList.add(
-            "password-locked"
-        );
-
-        document.documentElement.classList.add(
-            "password-locked"
-        );
+    /* LOCK BACKGROUND PAGE */
+    document.body.classList.add("password-locked");
+    document.documentElement.classList.add("password-locked");
 
 
-        /* =====================================
-           PASSWORD SUBMIT
-           Button + ENTER KEY
-        ===================================== */
+    passwordForm.addEventListener("submit", function (event) {
 
-        passwordForm.addEventListener(
-            "submit",
-            function (event) {
+        event.preventDefault();
+        event.stopPropagation();
 
-                event.preventDefault();
-                event.stopPropagation();
+        const enteredPassword =
+            passwordInput.value.trim();
 
+        if (enteredPassword === correctPassword) {
 
-                const enteredPassword =
-                    passwordInput.value.trim();
+            passwordScreen.classList.add("hidden");
 
+            document.body.classList.remove("password-locked");
+            document.documentElement.classList.remove("password-locked");
 
-                if (
-                    enteredPassword ===
-                    correctPassword
-                ) {
+            setTimeout(function () {
+                passwordScreen.remove();
+            }, 100);
 
-                    /* Unlock website */
+            passwordInput.value = "";
 
-                    document.body.classList.remove(
-                        "password-locked"
-                    );
+        } else {
 
-                    document.documentElement.classList.remove(
-                        "password-locked"
-                    );
+            passwordError.textContent =
+                "That's not the password. Try again.";
 
+            passwordInput.value = "";
+            passwordInput.focus();
+        }
 
-                    /* Hide password screen */
+    });
 
-                    passwordScreen.classList.add(
-                        "hidden"
-                    );
+});
 
 
-                    /* Remove password screen */
+/* =========================================
+   PASSWORD PROTECTION
+========================================= */
 
-                    setTimeout(
-                        function () {
+document.addEventListener("DOMContentLoaded", function () {
 
-                            if (
-                                passwordScreen.parentNode
-                            ) {
+    const passwordScreen =
+        document.getElementById("password-screen");
 
-                                passwordScreen.remove();
+    const passwordForm =
+        document.getElementById("password-form");
 
-                            }
+    const passwordInput =
+        document.getElementById("password-input");
 
-                        },
-                        100
-                    );
+    const passwordError =
+        document.getElementById("password-error");
 
-
-                    passwordInput.value = "";
+    const correctPassword = "sunflower";
 
 
-                } else {
-
-                    if (passwordError) {
-
-                        passwordError.textContent =
-                            "That's not the password. Try again.";
-
-                    }
-
-                    passwordInput.value = "";
-
-                    passwordInput.focus();
-
-                }
-
-            }
-        );
-
+    if (!passwordScreen || !passwordForm) {
+        return;
     }
 
 
-    /* =========================================
-       ANONYMOUS VISITOR ID
-       
-       IMPORTANT:
-       This is ONLY a function.
-       It does NOT run when the website opens.
-    ========================================= */
+    passwordForm.addEventListener("submit", function (event) {
 
-    function getVisitorId() {
+        event.preventDefault();
+        event.stopPropagation();
 
-        const storageKey =
-            "art_gift_visitor_id";
+        const enteredPassword =
+            passwordInput.value.trim();
+
+
+        if (enteredPassword === correctPassword) {
+
+            /* Hide password screen completely */
+            passwordScreen.classList.add("hidden");
+
+            /* Remove it from the page */
+            setTimeout(function () {
+                passwordScreen.remove();
+            }, 100);
+
+            /* Clear password */
+            passwordInput.value = "";
+
+        } else {
+
+            passwordError.textContent =
+                "That's not the password. Try again.";
+
+            passwordInput.value = "";
+
+            passwordInput.focus();
+
+        }
+
+    });
+
+});
+
+
+/* =========================================
+   FEEDBACK SYSTEM
+========================================= */
+
+const form =
+    document.getElementById("feedback-form");
+
+const feedback =
+    document.getElementById("feedback");
+
+const characterCount =
+    document.getElementById("character-count");
+
+const thankYou =
+    document.getElementById("thank-you");
+
+const submitButton =
+    document.getElementById("submit-button");
+
+
+/* =========================================
+   GOOGLE APPS SCRIPT URL
+========================================= */
+
+const FEEDBACK_URL =
+    "https://script.google.com/macros/s/AKfycbxxxWgiIXMYzRotj7ouTVW7WWPYjf38EgKg-FRFd0iicM4ct3niYDAGAhSUHfVuCtqQPg/exec";
+
+
+/* =========================================
+   CHARACTER COUNTER
+========================================= */
+
+if (feedback && characterCount) {
+
+    feedback.addEventListener(
+        "input",
+        function () {
+
+            characterCount.textContent =
+                feedback.value.length;
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   FORM SUBMISSION
+   CROSS-BROWSER VERSION
+========================================= */
+
+if (form && feedback && submitButton) {
+
+    form.addEventListener("submit", function (e) {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+
+        /* Get message */
+        const message =
+            feedback.value.trim();
+
+
+        /* Do not submit empty messages */
+        if (!message) {
+
+            alert(
+                "Please write something about the artwork."
+            );
+
+            feedback.focus();
+
+            return;
+        }
+
+
+        /* Prevent double tapping */
+        if (submitButton.disabled) {
+            return;
+        }
+
+
+        submitButton.disabled = true;
+        submitButton.textContent = "SENDING...";
+
+
+        /*
+         * =====================================
+         * METHOD 1
+         * navigator.sendBeacon
+         *
+         * This is very reliable on modern
+         * Android, iPhone, Safari and Chrome.
+         * =====================================
+         */
+
+        let beaconSent = false;
 
 
         try {
 
-            let visitorId = null;
-
-
-            /* Try to read existing ID */
-
-            try {
-
-                visitorId =
-                    localStorage.getItem(
-                        storageKey
-                    );
-
-            } catch (storageError) {
-
-                console.log(
-                    "Local storage read unavailable.",
-                    storageError
-                );
-
-            }
-
-
-            /* Existing visitor */
-
-            if (visitorId) {
-
-                return visitorId;
-
-            }
-
-
-            /* =================================
-               CREATE NEW VISITOR ID
-            ================================= */
-
             if (
-                window.crypto &&
-                typeof window.crypto.randomUUID ===
-                    "function"
+                navigator.sendBeacon &&
+                typeof Blob !== "undefined"
             ) {
 
-                visitorId =
-                    "V-" +
-                    window.crypto.randomUUID();
+                const formData =
+                    new URLSearchParams();
 
-            } else {
-
-                visitorId =
-                    "V-" +
-                    Date.now().toString(36) +
-                    "-" +
-                    Math.random()
-                        .toString(36)
-                        .substring(2, 12);
-
-            }
-
-
-            /* =================================
-               SAVE ID
-            ================================= */
-
-            try {
-
-                localStorage.setItem(
-                    storageKey,
-                    visitorId
+                formData.append(
+                    "message",
+                    message
                 );
 
-            } catch (storageError) {
 
-                /*
-                 * Some browsers/webviews can
-                 * block localStorage.
-                 *
-                 * This must NEVER stop the
-                 * website.
-                 */
+                const blob =
+                    new Blob(
+                        [formData.toString()],
+                        {
+                            type:
+                                "application/x-www-form-urlencoded"
+                        }
+                    );
 
-                console.log(
-                    "Local storage write unavailable.",
-                    storageError
-                );
+
+                beaconSent =
+                    navigator.sendBeacon(
+                        FEEDBACK_URL,
+                        blob
+                    );
 
             }
-
-
-            return visitorId;
-
 
         } catch (error) {
 
-            /*
-             * FINAL FALLBACK
-             *
-             * Visitor ID errors must never
-             * stop the website.
-             */
-
             console.log(
-                "Visitor ID error:",
+                "Beacon failed. Using form fallback.",
                 error
             );
 
-
-            return (
-                "V-" +
-                Date.now().toString(36) +
-                "-" +
-                Math.random()
-                    .toString(36)
-                    .substring(2, 12)
-            );
-
+            beaconSent = false;
         }
 
-    }
 
+        /*
+         * =====================================
+         * METHOD 2
+         * NORMAL HTML FORM FALLBACK
+         *
+         * This works on browsers where
+         * sendBeacon is unavailable.
+         * =====================================
+         */
 
-    /* =========================================
-       FEEDBACK ELEMENTS
-    ========================================= */
+        if (!beaconSent) {
 
-    const form =
-        document.getElementById(
-            "feedback-form"
-        );
+            try {
 
-    const feedback =
-        document.getElementById(
-            "feedback"
-        );
+                /*
+                 * Create hidden iframe.
+                 * The browser handles the POST
+                 * natively instead of JavaScript
+                 * fetch/XHR.
+                 */
 
-    const characterCount =
-        document.getElementById(
-            "character-count"
-        );
+                const iframe =
+                    document.createElement("iframe");
 
-    const thankYou =
-        document.getElementById(
-            "thank-you"
-        );
+                iframe.name =
+                    "feedback-submit-frame";
 
-    const submitButton =
-        document.getElementById(
-            "submit-button"
-        );
+                iframe.style.display =
+                    "none";
 
+                iframe.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
 
-    /* =========================================
-       GOOGLE APPS SCRIPT URL
-       
-       KEEP YOUR CURRENT URL
-    ========================================= */
+                document.body.appendChild(
+                    iframe
+                );
 
-    const FEEDBACK_URL =
-        "https://script.google.com/macros/s/AKfycbxxxWgiIXMYzRotj7ouTVW7WWPYjf38EgKg-FRFd0iicM4ct3niYDAGAhSUHfVuCtqQPg/exec";
 
+                /*
+                 * Create native HTML form.
+                 */
 
-    /* =========================================
-       CHARACTER COUNTER
-    ========================================= */
+                const submitForm =
+                    document.createElement("form");
 
-    if (
-        feedback &&
-        characterCount
-    ) {
+                submitForm.method =
+                    "POST";
 
-        feedback.addEventListener(
-            "input",
-            function () {
+                submitForm.action =
+                    FEEDBACK_URL;
 
-                characterCount.textContent =
-                    feedback.value.length;
+                submitForm.target =
+                    "feedback-submit-frame";
 
-            }
-        );
+                submitForm.style.display =
+                    "none";
 
-    }
 
+                /*
+                 * Create message field.
+                 */
 
-    /* =========================================
-       FEEDBACK FORM SUBMISSION
-    ========================================= */
+                const messageInput =
+                    document.createElement("input");
 
-    if (
-        form &&
-        feedback &&
-        submitButton
-    ) {
+                messageInput.type =
+                    "hidden";
 
-        form.addEventListener(
-            "submit",
-            function (event) {
+                messageInput.name =
+                    "message";
 
-                event.preventDefault();
-                event.stopPropagation();
+                messageInput.value =
+                    message;
 
 
-                /* =================================
-                   GET MESSAGE
-                ================================= */
+                submitForm.appendChild(
+                    messageInput
+                );
 
-                const message =
-                    feedback.value.trim();
+                document.body.appendChild(
+                    submitForm
+                );
 
 
-                /* =================================
-                   EMPTY MESSAGE CHECK
-                ================================= */
+                /*
+                 * Native browser submission.
+                 */
 
-                if (!message) {
+                submitForm.submit();
 
-                    alert(
-                        "Please write something about the artwork."
-                    );
 
-                    feedback.focus();
-
-                    return;
-
-                }
-
-
-                /* =================================
-                   PREVENT DOUBLE SUBMISSION
-                ================================= */
-
-                if (
-                    submitButton.disabled
-                ) {
-
-                    return;
-
-                }
-
-
-                /* =================================
-                   GET VISITOR ID
-                   
-                   IMPORTANT:
-                   Visitor ID is generated HERE,
-                   NOT when the website opens.
-                ================================= */
-
-                const visitorId =
-                    getVisitorId();
-
-
-                /* Disable button */
-
-                submitButton.disabled =
-                    true;
-
-                submitButton.textContent =
-                    "SENDING...";
-
-
-                /* =================================
-                   METHOD 1
-                   
-                   navigator.sendBeacon
-                ================================= */
-
-                let beaconSent =
-                    false;
-
-
-                try {
-
-                    if (
-                        navigator.sendBeacon &&
-                        typeof Blob !==
-                            "undefined"
-                    ) {
-
-
-                        const formData =
-                            new URLSearchParams();
-
-
-                        /* Message */
-
-                        formData.append(
-                            "message",
-                            message
-                        );
-
-
-                        /* Visitor ID */
-
-                        formData.append(
-                            "visitorId",
-                            visitorId
-                        );
-
-
-                        /* Create request */
-
-                        const blob =
-                            new Blob(
-                                [
-                                    formData.toString()
-                                ],
-                                {
-                                    type:
-                                        "application/x-www-form-urlencoded"
-                                }
-                            );
-
-
-                        /* Send */
-
-                        beaconSent =
-                            navigator.sendBeacon(
-                                FEEDBACK_URL,
-                                blob
-                            );
-
-                    }
-
-
-                } catch (error) {
-
-                    console.log(
-                        "Beacon failed. Using form fallback.",
-                        error
-                    );
-
-                    beaconSent =
-                        false;
-
-                }
-
-
-                /* =================================
-                   METHOD 2
-                   
-                   NATIVE HTML FORM FALLBACK
-                   
-                   Used when sendBeacon fails.
-                ================================= */
-
-                if (!beaconSent) {
-
-                    try {
-
-
-                        /* =================================
-                           CREATE HIDDEN IFRAME
-                        ================================= */
-
-                        const iframe =
-                            document.createElement(
-                                "iframe"
-                            );
-
-
-                        /*
-                         * Unique iframe name prevents
-                         * conflicts with another submission.
-                         */
-
-                        iframe.name =
-                            "feedback-submit-frame-" +
-                            Date.now();
-
-
-                        iframe.style.display =
-                            "none";
-
-
-                        iframe.setAttribute(
-                            "aria-hidden",
-                            "true"
-                        );
-
-
-                        document.body.appendChild(
-                            iframe
-                        );
-
-
-                        /* =================================
-                           CREATE NATIVE FORM
-                        ================================= */
-
-                        const submitForm =
-                            document.createElement(
-                                "form"
-                            );
-
-
-                        submitForm.method =
-                            "POST";
-
-
-                        submitForm.action =
-                            FEEDBACK_URL;
-
-
-                        submitForm.target =
-                            iframe.name;
-
-
-                        submitForm.style.display =
-                            "none";
-
-
-                        /* =================================
-                           MESSAGE FIELD
-                        ================================= */
-
-                        const messageInput =
-                            document.createElement(
-                                "input"
-                            );
-
-
-                        messageInput.type =
-                            "hidden";
-
-
-                        messageInput.name =
-                            "message";
-
-
-                        messageInput.value =
-                            message;
-
-
-                        submitForm.appendChild(
-                            messageInput
-                        );
-
-
-                        /* =================================
-                           VISITOR ID FIELD
-                        ================================= */
-
-                        const visitorInput =
-                            document.createElement(
-                                "input"
-                            );
-
-
-                        visitorInput.type =
-                            "hidden";
-
-
-                        visitorInput.name =
-                            "visitorId";
-
-
-                        visitorInput.value =
-                            visitorId;
-
-
-                        submitForm.appendChild(
-                            visitorInput
-                        );
-
-
-                        /* Add form to page */
-
-                        document.body.appendChild(
-                            submitForm
-                        );
-
-
-                        /* =================================
-                           NATIVE SUBMISSION
-                        ================================= */
-
-                        submitForm.submit();
-
-
-                        /* =================================
-                           CLEANUP
-                        ================================= */
-
-                        setTimeout(
-                            function () {
-
-
-                                if (
-                                    submitForm &&
-                                    submitForm.parentNode
-                                ) {
-
-                                    submitForm.remove();
-
-                                }
-
-
-                                if (
-                                    iframe &&
-                                    iframe.parentNode
-                                ) {
-
-                                    iframe.remove();
-
-                                }
-
-
-                            },
-                            10000
-                        );
-
-
-                    } catch (error) {
-
-                        console.error(
-                            "Feedback fallback failed:",
-                            error
-                        );
-
-
-                        /* Re-enable button */
-
-                        submitButton.disabled =
-                            false;
-
-
-                        submitButton.textContent =
-                            "SUBMIT";
-
-
-                        alert(
-                            "The message could not be sent. Please check your internet connection and try again."
-                        );
-
-
-                        return;
-
-                    }
-
-                }
-
-
-                /* =================================
-                   SHOW THANK YOU
-                ================================= */
+                /*
+                 * Clean up after enough time
+                 * for slow mobile networks.
+                 */
 
                 setTimeout(
                     function () {
 
-
-                        /* Clear message */
-
-                        feedback.value =
-                            "";
-
-
-                        /* Reset counter */
-
                         if (
-                            characterCount
+                            submitForm &&
+                            submitForm.parentNode
                         ) {
 
-                            characterCount.textContent =
-                                "0";
+                            submitForm.remove();
 
                         }
 
 
-                        /* Hide feedback form */
-
-                        form.style.display =
-                            "none";
-
-
-                        /* Show thank you */
-
                         if (
-                            thankYou
+                            iframe &&
+                            iframe.parentNode
                         ) {
 
-                            thankYou.style.display =
-                                "block";
-
-
-                            /* Scroll to thank you */
-
-                            try {
-
-                                thankYou.scrollIntoView(
-                                    {
-                                        behavior:
-                                            "smooth",
-
-                                        block:
-                                            "center"
-                                    }
-                                );
-
-                            } catch (error) {
-
-                                thankYou.scrollIntoView();
-
-                            }
+                            iframe.remove();
 
                         }
 
                     },
-                    1500
+                    10000
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Feedback fallback failed:",
+                    error
+                );
+
+                submitButton.disabled =
+                    false;
+
+                submitButton.textContent =
+                    "SUBMIT";
+
+                alert(
+                    "The message could not be sent. Please check your internet connection and try again."
+                );
+
+                return;
+            }
+
+        }
+
+
+        /*
+         * =====================================
+         * SHOW THANK YOU
+         *
+         * Do NOT wait only 2 seconds for
+         * the Apps Script page to load.
+         *
+         * The browser has already handed the
+         * request to the network using Beacon,
+         * or submitted the native form.
+         * =====================================
+         */
+
+        setTimeout(
+            function () {
+
+                /*
+                 * Clear message
+                 */
+
+                feedback.value = "";
+
+
+                if (characterCount) {
+
+                    characterCount.textContent =
+                        "0";
+
+                }
+
+
+                /*
+                 * Hide form
+                 */
+
+                form.style.display =
+                    "none";
+
+
+                /*
+                 * Show thank-you
+                 */
+
+                if (thankYou) {
+
+                    thankYou.style.display =
+                        "block";
+
+
+                    /*
+                     * Scroll only if supported.
+                     * Older browsers won't break.
+                     */
+
+                    try {
+
+                        thankYou.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center"
+                        });
+
+                    } catch (error) {
+
+                        thankYou.scrollIntoView();
+
+                    }
+
+                }
+
+            },
+            1500
+        );
+
+    });
+
+}
+
+
+/* =========================================
+   VIDEO DOWNLOAD
+========================================= */
+
+const downloadVideo =
+    document.getElementById("download-video");
+
+
+downloadVideo.addEventListener(
+    "click",
+    async function () {
+
+        try {
+
+            downloadVideo.disabled = true;
+
+            const originalText =
+                downloadVideo.querySelector(
+                    ".download-text"
+                );
+
+            originalText.textContent =
+                "DOWNLOADING...";
+
+
+            const response =
+                await fetch(
+                    "assets/artwork.mp4"
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Video could not be found."
                 );
 
             }
-        );
+
+
+            const blob =
+                await response.blob();
+
+
+            const url =
+                URL.createObjectURL(blob);
+
+
+            const link =
+                document.createElement("a");
+
+
+            link.href = url;
+
+            link.download =
+                "artwork.mp4";
+
+
+            document.body.appendChild(link);
+
+            link.click();
+
+            link.remove();
+
+
+            URL.revokeObjectURL(url);
+
+
+            originalText.textContent =
+                "VIDEO DOWNLOADED";
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(
+                "The video could not be downloaded. Please try again."
+            );
+
+
+            const originalText =
+                downloadVideo.querySelector(
+                    ".download-text"
+                );
+
+            originalText.textContent =
+                "DOWNLOAD VIDEO";
+
+
+        } finally {
+
+            downloadVideo.disabled = false;
+
+        }
 
     }
-
-
-    /* =========================================
-       VIDEO DOWNLOAD
-    ========================================= */
-
-    const downloadVideo =
-        document.getElementById(
-            "download-video"
-        );
-
-
-    if (downloadVideo) {
-
-        downloadVideo.addEventListener(
-            "click",
-            async function () {
-
-
-                try {
-
-
-                    /* Disable button */
-
-                    downloadVideo.disabled =
-                        true;
-
-
-                    /* Button text */
-
-                    const originalText =
-                        downloadVideo.querySelector(
-                            ".download-text"
-                        );
-
-
-                    if (originalText) {
-
-                        originalText.textContent =
-                            "DOWNLOADING...";
-
-                    }
-
-
-                    /* =================================
-                       GET VIDEO
-                    ================================= */
-
-                    const response =
-                        await fetch(
-                            "assets/artwork.mp4"
-                        );
-
-
-                    if (!response.ok) {
-
-                        throw new Error(
-                            "Video could not be found."
-                        );
-
-                    }
-
-
-                    /* Convert to Blob */
-
-                    const blob =
-                        await response.blob();
-
-
-                    /* Create temporary URL */
-
-                    const url =
-                        URL.createObjectURL(
-                            blob
-                        );
-
-
-                    /* Create download link */
-
-                    const link =
-                        document.createElement(
-                            "a"
-                        );
-
-
-                    link.href =
-                        url;
-
-
-                    link.download =
-                        "artwork.mp4";
-
-
-                    document.body.appendChild(
-                        link
-                    );
-
-
-                    /* Start download */
-
-      
+);
