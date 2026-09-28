@@ -92,12 +92,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (enteredPassword === correctPassword) {
 
+            /* Hide password screen completely */
             passwordScreen.classList.add("hidden");
 
+            /* Remove it from the page */
             setTimeout(function () {
                 passwordScreen.remove();
             }, 100);
 
+            /* Clear password */
             passwordInput.value = "";
 
         } else {
@@ -151,19 +154,23 @@ const FEEDBACK_URL =
 /*
  * Creates one random ID for this browser.
  *
- * It does NOT collect:
- * - name
- * - phone number
+ * Example:
+ * V-550e8400-e29b-41d4-a716-446655440000
+ *
+ * This is NOT:
  * - IMEI
- * - phone serial number
+ * - phone number
+ * - device serial number
+ * - name
  *
  * The same browser normally keeps the same ID
- * unless its site data is cleared.
+ * unless its site data/localStorage is cleared.
  */
 
 function getVisitorId() {
 
-    const storageKey = "art_gift_visitor_id";
+    const storageKey =
+        "art_gift_visitor_id";
 
     let visitorId =
         localStorage.getItem(storageKey);
@@ -173,12 +180,12 @@ function getVisitorId() {
 
         if (
             window.crypto &&
-            crypto.randomUUID
+            typeof window.crypto.randomUUID === "function"
         ) {
 
             visitorId =
                 "V-" +
-                crypto.randomUUID();
+                window.crypto.randomUUID();
 
         } else {
 
@@ -188,7 +195,7 @@ function getVisitorId() {
                 "-" +
                 Math.random()
                     .toString(36)
-                    .substring(2, 10);
+                    .substring(2, 12);
 
         }
 
@@ -197,7 +204,6 @@ function getVisitorId() {
             storageKey,
             visitorId
         );
-
     }
 
 
@@ -205,7 +211,12 @@ function getVisitorId() {
 }
 
 
-const visitorId = getVisitorId();
+/*
+ * Get this browser's Visitor ID once.
+ */
+
+const visitorId =
+    getVisitorId();
 
 
 /* =========================================
@@ -228,126 +239,8 @@ if (feedback && characterCount) {
 
 
 /* =========================================
-   RELIABLE FEEDBACK SUBMISSION
-========================================= */
-
-let feedbackWaiting = false;
-
-let feedbackTimeout = null;
-
-let feedbackIframe = null;
-
-let feedbackSubmitForm = null;
-
-
-/* =========================================
-   LISTEN FOR GOOGLE SHEETS CONFIRMATION
-========================================= */
-
-window.addEventListener("message", function (event) {
-
-    if (!feedbackWaiting) {
-        return;
-    }
-
-
-    if (
-        event.data &&
-        event.data.type === "ART_FEEDBACK_SAVED"
-    ) {
-
-        finishFeedbackSubmission(true);
-
-    }
-
-});
-
-
-/* =========================================
-   FINISH FEEDBACK
-========================================= */
-
-function finishFeedbackSubmission(success) {
-
-    if (!feedbackWaiting) {
-        return;
-    }
-
-    feedbackWaiting = false;
-
-
-    if (feedbackTimeout) {
-
-        clearTimeout(feedbackTimeout);
-
-        feedbackTimeout = null;
-
-    }
-
-
-    if (feedbackSubmitForm) {
-
-        feedbackSubmitForm.remove();
-
-        feedbackSubmitForm = null;
-
-    }
-
-
-    if (feedbackIframe) {
-
-        feedbackIframe.remove();
-
-        feedbackIframe = null;
-
-    }
-
-
-    submitButton.disabled = false;
-
-    submitButton.textContent = "SUBMIT";
-
-
-    if (success) {
-
-        feedback.value = "";
-
-
-        if (characterCount) {
-
-            characterCount.textContent = "0";
-
-        }
-
-
-        form.style.display = "none";
-
-
-        thankYou.style.display = "block";
-
-
-        thankYou.scrollIntoView({
-
-            behavior: "smooth",
-
-            block: "center"
-
-        });
-
-
-    } else {
-
-        alert(
-            "We couldn't confirm that your message was received. Please try submitting again."
-        );
-
-    }
-
-}
-
-
-/* =========================================
-   SUBMIT FEEDBACK
+   FORM SUBMISSION
+   CROSS-BROWSER VERSION
 ========================================= */
 
 if (form && feedback && submitButton) {
@@ -355,17 +248,15 @@ if (form && feedback && submitButton) {
     form.addEventListener("submit", function (e) {
 
         e.preventDefault();
+        e.stopPropagation();
 
 
-        if (feedbackWaiting) {
-            return;
-        }
-
-
+        /* Get message */
         const message =
             feedback.value.trim();
 
 
+        /* Do not submit empty messages */
         if (!message) {
 
             alert(
@@ -375,290 +266,126 @@ if (form && feedback && submitButton) {
             feedback.focus();
 
             return;
+        }
 
+
+        /* Prevent double tapping */
+        if (submitButton.disabled) {
+            return;
         }
 
 
         submitButton.disabled = true;
+        submitButton.textContent = "SENDING...";
 
-        submitButton.textContent =
-            "SENDING...";
 
+        /*
+         * =====================================
+         * METHOD 1
+         * navigator.sendBeacon
+         * =====================================
+         */
 
-        feedbackWaiting = true;
+        let beaconSent = false;
 
 
-        /* =====================================
-           CREATE HIDDEN IFRAME
-        ===================================== */
+        try {
 
-        feedbackIframe =
-            document.createElement("iframe");
+            if (
+                navigator.sendBeacon &&
+                typeof Blob !== "undefined"
+            ) {
 
+                const formData =
+                    new URLSearchParams();
 
-        feedbackIframe.name =
-            "feedback-submit-" +
-            Date.now();
 
-
-        feedbackIframe.title =
-            "Feedback submission";
-
-
-        feedbackIframe.style.position =
-            "fixed";
-
-        feedbackIframe.style.width =
-            "1px";
-
-        feedbackIframe.style.height =
-            "1px";
-
-        feedbackIframe.style.left =
-            "-10000px";
-
-        feedbackIframe.style.top =
-            "-10000px";
-
-        feedbackIframe.style.border =
-            "0";
-
-        feedbackIframe.style.opacity =
-            "0";
-
-        feedbackIframe.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-
-
-        document.body.appendChild(
-            feedbackIframe
-        );
-
-
-        /* =====================================
-           CREATE NATIVE HTML FORM
-        ===================================== */
-
-        feedbackSubmitForm =
-            document.createElement("form");
-
-
-        feedbackSubmitForm.method =
-            "POST";
-
-
-        feedbackSubmitForm.action =
-            FEEDBACK_URL;
-
-
-        feedbackSubmitForm.target =
-            feedbackIframe.name;
-
-
-        feedbackSubmitForm.style.position =
-            "fixed";
-
-        feedbackSubmitForm.style.width =
-            "1px";
-
-        feedbackSubmitForm.style.height =
-            "1px";
-
-        feedbackSubmitForm.style.left =
-            "-10000px";
-
-        feedbackSubmitForm.style.top =
-            "-10000px";
-
-        feedbackSubmitForm.style.opacity =
-            "0";
-
-
-        /* =====================================
-           MESSAGE FIELD
-        ===================================== */
-
-        const messageInput =
-            document.createElement("input");
-
-
-        messageInput.type =
-            "hidden";
-
-
-        messageInput.name =
-            "message";
-
-
-        messageInput.value =
-            message;
-
-
-        feedbackSubmitForm.appendChild(
-            messageInput
-        );
-
-
-        /* =====================================
-           VISITOR ID FIELD
-        ===================================== */
-
-        const visitorInput =
-            document.createElement("input");
-
-
-        visitorInput.type =
-            "hidden";
-
-
-        visitorInput.name =
-            "visitorId";
-
-
-        visitorInput.value =
-            visitorId;
-
-
-        feedbackSubmitForm.appendChild(
-            visitorInput
-        );
-
-
-        document.body.appendChild(
-            feedbackSubmitForm
-        );
-
-
-        /* =====================================
-           NATIVE SUBMISSION
-        ===================================== */
-
-        HTMLFormElement.prototype.submit.call(
-            feedbackSubmitForm
-        );
-
-
-        /* =====================================
-           SAFETY TIMEOUT
-        ===================================== */
-
-        feedbackTimeout =
-            setTimeout(function () {
-
-                finishFeedbackSubmission(false);
-
-            }, 15000);
-
-    });
-
-}
-
-
-/* =========================================
-   VIDEO DOWNLOAD
-========================================= */
-
-const downloadVideo =
-    document.getElementById("download-video");
-
-
-if (downloadVideo) {
-
-    downloadVideo.addEventListener(
-        "click",
-        async function () {
-
-            try {
-
-                downloadVideo.disabled = true;
-
-
-                const originalText =
-                    downloadVideo.querySelector(
-                        ".download-text"
-                    );
-
-
-                originalText.textContent =
-                    "DOWNLOADING...";
-
-
-                const response =
-                    await fetch(
-                        "assets/artwork.mp4"
-                    );
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        "Video could not be found."
-                    );
-
-                }
-
-
-                const blob =
-                    await response.blob();
-
-
-                const url =
-                    URL.createObjectURL(blob);
-
-
-                const link =
-                    document.createElement("a");
-
-
-                link.href = url;
-
-                link.download =
-                    "artwork.mp4";
-
-
-                document.body.appendChild(link);
-
-                link.click();
-
-                link.remove();
-
-
-                URL.revokeObjectURL(url);
-
-
-                originalText.textContent =
-                    "VIDEO DOWNLOADED";
-
-
-            } catch (error) {
-
-                console.error(error);
-
-
-                alert(
-                    "The video could not be downloaded. Please try again."
+                /* Feedback message */
+                formData.append(
+                    "message",
+                    message
                 );
 
 
-                const originalText =
-                    downloadVideo.querySelector(
-                        ".download-text"
+                /* Anonymous Visitor ID */
+                formData.append(
+                    "visitorId",
+                    visitorId
+                );
+
+
+                const blob =
+                    new Blob(
+                        [formData.toString()],
+                        {
+                            type:
+                                "application/x-www-form-urlencoded"
+                        }
                     );
 
 
-                originalText.textContent =
-                    "DOWNLOAD VIDEO";
-
-
-            } finally {
-
-                downloadVideo.disabled = false;
+                beaconSent =
+                    navigator.sendBeacon(
+                        FEEDBACK_URL,
+                        blob
+                    );
 
             }
 
-        }
-    );
+        } catch (error) {
 
-}
+            console.log(
+                "Beacon failed. Using form fallback.",
+                error
+            );
+
+            beaconSent = false;
+        }
+
+
+        /*
+         * =====================================
+         * METHOD 2
+         * NORMAL HTML FORM FALLBACK
+         * =====================================
+         */
+
+        if (!beaconSent) {
+
+            try {
+
+                /*
+                 * Create hidden iframe.
+                 */
+
+                const iframe =
+                    document.createElement("iframe");
+
+                iframe.name =
+                    "feedback-submit-frame";
+
+                iframe.style.display =
+                    "none";
+
+                iframe.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+                document.body.appendChild(
+                    iframe
+                );
+
+
+                /*
+                 * Create native HTML form.
+                 */
+
+                const submitForm =
+                    document.createElement("form");
+
+                submitForm.method =
+                    "POST";
+
+                submitForm.action =
+                    FEEDBACK
