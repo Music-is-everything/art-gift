@@ -285,27 +285,24 @@ if (form && feedback && submitButton) {
                 navigator.sendBeacon &&
                 typeof Blob !== "undefined"
             ) {
-
                 const formData =
-                    new URLSearchParams();
-                formData.append( "message",
-                  message
-                    
+                    new FormData();
+                formData.append(
+                    "message",
+                    message
                 );
-                formData.append( "visitorId", visitorId
-                    
-                );    
-
-
+                formData.append(
+                    "visitorId",
+                    visitorId
+                );
                 const blob =
                     new Blob(
-                        [formData.toString()],
-                        {
-                            type:
-                                "application/x-www-form-urlencoded"
-                        }
-                    );
-
+                        [new URLSearchParams(formData).toString()],
+        {
+            type:
+                "application/x-www-form-urlencoded"
+        }
+    );
 
                 beaconSent =
                     navigator.sendBeacon(
