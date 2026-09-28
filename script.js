@@ -414,7 +414,7 @@ if (form && feedback && submitButton) {
                     "visitorId";
                 visitorInput.value =
                     visitorId;
-                submitFor.appendChild(
+                submitForm.appendChild(
                     visitorInput
                     
                 );
