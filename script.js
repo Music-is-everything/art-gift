@@ -301,8 +301,8 @@ if (form && feedback && submitButton) {
                         {
                             type: 
                                 "application/x-www-form-urlencoded"
-        }
-    );
+                        }
+                    );
 
                 beaconSent =
                     navigator.sendBeacon(
