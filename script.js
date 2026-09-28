@@ -1,4 +1,28 @@
 /* =========================================
+   ANONYMOUS VISITOR ID
+========================================= */
+
+function getVisitorId() {
+
+  let visitorId =
+    localStorage.getItem("artVisitorId");
+
+  if (!visitorId) {
+
+    visitorId =
+      "VIS-" + crypto.randomUUID();
+
+    localStorage.setItem(
+      "artVisitorId",
+      visitorId
+    );
+  }
+
+  return visitorId;
+}
+
+const visitorId = getVisitorId();
+/* =========================================
    PASSWORD PROTECTION
 ========================================= */
 
