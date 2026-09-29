@@ -2,68 +2,209 @@
    PASSWORD PROTECTION
 ========================================= */
 
-document.addEventListener("DOMContentLoaded", function () {
+(function () {
 
-    const passwordScreen =
-        document.getElementById("password-screen");
+    "use strict";
 
-    const passwordForm =
-        document.getElementById("password-form");
-
-    const passwordInput =
-        document.getElementById("password-input");
-
-    const passwordError =
-        document.getElementById("password-error");
-
-    const correctPassword = "sunflower";
+    const PASSWORD = "sunflower";
 
 
-    if (!passwordScreen || !passwordForm) {
-        return;
+    function setupPassword() {
+
+        const passwordScreen =
+            document.getElementById("password-screen");
+
+        const passwordForm =
+            document.getElementById("password-form");
+
+        const passwordInput =
+            document.getElementById("password-input");
+
+        const passwordError =
+            document.getElementById("password-error");
+
+
+        /*
+         * If the password HTML isn't present,
+         * don't interfere with the rest of the site.
+         */
+
+        if (
+            !passwordScreen ||
+            !passwordForm ||
+            !passwordInput
+        ) {
+            return;
+        }
+
+
+        /*
+         * Keep the website locked while the
+         * password screen is visible.
+         */
+
+        document.documentElement.classList.add(
+            "password-locked"
+        );
+
+        document.body.classList.add(
+            "password-locked"
+        );
+
+
+        /*
+         * Prevent duplicate submit handlers.
+         */
+
+        if (
+            passwordForm.dataset.passwordReady === "true"
+        ) {
+            return;
+        }
+
+        passwordForm.dataset.passwordReady = "true";
+
+
+        passwordForm.addEventListener(
+            "submit",
+            function (event) {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+
+                const enteredPassword =
+                    passwordInput.value;
+
+
+                /*
+                 * Exact password comparison.
+                 *
+                 * No trimming, so only the actual
+                 * password "sunflower" is accepted.
+                 */
+
+                if (
+                    enteredPassword === PASSWORD
+                ) {
+
+                    /*
+                     * Hide the password screen
+                     * immediately.
+                     */
+
+                    passwordScreen.classList.add(
+                        "hidden"
+                    );
+
+
+                    /*
+                     * Unlock the page.
+                     */
+
+                    document.documentElement.classList.remove(
+                        "password-locked"
+                    );
+
+                    document.body.classList.remove(
+                        "password-locked"
+                    );
+
+
+                    /*
+                     * Clear any previous error.
+                     */
+
+                    if (passwordError) {
+
+                        passwordError.textContent =
+                            "";
+
+                    }
+
+
+                    /*
+                     * Clear the input.
+                     */
+
+                    passwordInput.value = "";
+
+
+                    /*
+                     * Remove the password overlay
+                     * after the hide animation.
+                     */
+
+                    setTimeout(
+                        function () {
+
+                            if (
+                                passwordScreen &&
+                                passwordScreen.parentNode
+                            ) {
+
+                                passwordScreen.parentNode.removeChild(
+                                    passwordScreen
+                                );
+
+                            }
+
+                        },
+                        350
+                    );
+
+
+                } else {
+
+                    /*
+                     * Wrong password.
+                     */
+
+                    if (passwordError) {
+
+                        passwordError.textContent =
+                            "That's not the password. Try again.";
+
+                    }
+
+
+                    passwordInput.value = "";
+
+                    passwordInput.focus();
+
+                }
+
+            },
+            false
+        );
+
     }
 
 
-    document.body.classList.add("password-locked");
-    document.documentElement.classList.add("password-locked");
+    /*
+     * Works whether this script is loaded
+     * before or after the HTML.
+     */
 
+    if (
+        document.readyState === "loading"
+    ) {
 
-    passwordForm.addEventListener("submit", function (event) {
+        document.addEventListener(
+            "DOMContentLoaded",
+            setupPassword,
+            {
+                once: true
+            }
+        );
 
-        event.preventDefault();
-        event.stopPropagation();
+    } else {
 
-        const enteredPassword =
-            passwordInput.value.trim();
+        setupPassword();
 
+    }
 
-        if (enteredPassword === correctPassword) {
-
-            passwordScreen.classList.add("hidden");
-
-            document.body.classList.remove("password-locked");
-            document.documentElement.classList.remove("password-locked");
-
-            setTimeout(function () {
-                passwordScreen.remove();
-            }, 100);
-
-            passwordInput.value = "";
-
-        } else {
-
-            passwordError.textContent =
-                "That's not the password. Try again.";
-
-            passwordInput.value = "";
-            passwordInput.focus();
-
-        }
-
-    });
-
-});
-
+})();
 
 /* =========================================
    SEALED LETTER + 21 DAY SURPRISE
