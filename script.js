@@ -1,110 +1,186 @@
 /* =========================================
-   PASSWORD PROTECTION
+   PASSWORD — FINAL WORKING VERSION
 ========================================= */
 
-document.addEventListener("DOMContentLoaded", function () {
+(function () {
 
-    const passwordScreen =
-        document.getElementById("password-screen");
+    function startPassword() {
 
-    const passwordForm =
-        document.getElementById("password-form");
+        const screen =
+            document.getElementById("password-screen");
 
-    const passwordInput =
-        document.getElementById("password-input");
+        const form =
+            document.getElementById("password-form");
 
-    const passwordError =
-        document.getElementById("password-error");
+        const input =
+            document.getElementById("password-input");
 
-    const correctPassword =
-        "sunflower";
-
-
-    /* LOCK BACKGROUND PAGE */
-
-    if (passwordScreen) {
-        document.body.classList.add("password-locked");
-        document.documentElement.classList.add("password-locked");
-    }
+        const error =
+            document.getElementById("password-error");
 
 
-    if (!passwordForm) {
-        return;
-    }
+        /* If password HTML isn't present, do nothing. */
+
+        if (!screen || !form || !input) {
+            return;
+        }
 
 
-    passwordForm.addEventListener(
-        "submit",
-        function (event) {
-
-            event.preventDefault();
-            event.stopPropagation();
+        const PASSWORD = "sunflower";
 
 
-            const enteredPassword =
-                passwordInput.value.trim();
+        /* Lock the page */
+
+        document.documentElement.style.overflow =
+            "hidden";
+
+        document.body.style.overflow =
+            "hidden";
 
 
-            if (
-                enteredPassword ===
-                correctPassword
-            ) {
+        /*
+         * Prevent this handler from being
+         * installed more than once.
+         */
 
-                passwordScreen.classList.add(
-                    "hidden"
-                );
+        if (
+            form.dataset.passwordHandler === "installed"
+        ) {
+            return;
+        }
 
-
-                document.body.classList.remove(
-                    "password-locked"
-                );
-
-                document.documentElement.classList.remove(
-                    "password-locked"
-                );
+        form.dataset.passwordHandler =
+            "installed";
 
 
-                setTimeout(
-                    function () {
+        form.addEventListener(
+            "submit",
+            function (event) {
 
-                        if (
-                            passwordScreen &&
-                            passwordScreen.parentNode
-                        ) {
-
-                            passwordScreen.remove();
-
-                        }
-
-                    },
-                    100
-                );
+                event.preventDefault();
+                event.stopImmediatePropagation();
 
 
-                passwordInput.value = "";
+                const entered =
+                    input.value.trim();
 
 
-            } else {
+                /* =========================
+                   CORRECT PASSWORD
+                ========================= */
 
-                if (passwordError) {
+                if (
+                    entered === PASSWORD
+                ) {
 
-                    passwordError.textContent =
-                        "That's not the password. Try again.";
+                    /* Hide overlay directly */
+
+                    screen.style.display =
+                        "none";
+
+                    screen.style.visibility =
+                        "hidden";
+
+                    screen.style.pointerEvents =
+                        "none";
+
+
+                    /* Unlock page */
+
+                    document.documentElement.style.overflow =
+                        "";
+
+                    document.body.style.overflow =
+                        "";
+
+
+                    document.documentElement.classList.remove(
+                        "password-locked"
+                    );
+
+                    document.body.classList.remove(
+                        "password-locked"
+                    );
+
+
+                    /* Clear input */
+
+                    input.value = "";
+
+
+                    /* Remove overlay */
+
+                    setTimeout(
+                        function () {
+
+                            if (
+                                screen &&
+                                screen.parentNode
+                            ) {
+
+                                screen.parentNode.removeChild(
+                                    screen
+                                );
+
+                            }
+
+                        },
+                        50
+                    );
+
+
+                } else {
+
+                    /* =========================
+                       WRONG PASSWORD
+                    ========================= */
+
+                    if (error) {
+
+                        error.textContent =
+                            "That's not the password. Try again.";
+
+                    }
+
+                    input.value = "";
+
+                    input.focus();
 
                 }
 
-                passwordInput.value = "";
+            },
+            true
+        );
 
-                passwordInput.focus();
+    }
 
+
+    /*
+     * Your script is loaded at the bottom of
+     * the HTML, but this also works if it is
+     * loaded in the <head>.
+     */
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            startPassword,
+            {
+                once: true
             }
+        );
 
-        }
-    );
+    } else {
 
-});
+        startPassword();
 
+    }
 
+})();
 /* =========================================
    SEALED LETTER + 21 DAY SURPRISE
 ========================================= */
