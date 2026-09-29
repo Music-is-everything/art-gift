@@ -1,0 +1,659 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+ 
+<head> 
+ 
+    <meta charset="UTF-8"> 
+ 
+    <meta 
+        name="viewport" 
+        content="width=device-width, initial-scale=1.0" 
+    > 
+ 
+    <meta 
+        name="description" 
+        content="A little something for you." 
+    > 
+ 
+    <title>For You</title> 
+ 
+    <link 
+        rel="stylesheet" 
+        href="style.css" 
+    > 
+ 
+</head> 
+ 
+ 
+<body> 
+ <!-- ========================================= 
+     PASSWORD SCREEN 
+========================================= --> 
+ 
+<div class="password-screen" id="password-screen"> 
+ 
+    <div class="password-box"> 
+ 
+        <div class="password-flower"> 
+            
+�
+�
+ 
+        </div> 
+ 
+        <p class="password-label"> 
+            A LITTLE SECRET 
+        </p> 
+ 
+        <h1> 
+            For You 
+        </h1> 
+ 
+        <p class="password-hint"> 
+            Enter the password to open your gift. 
+        </p> 
+ 
+        <form id="password-form"> 
+ 
+            <input 
+                type="password" 
+                id="password-input" 
+                class="password-input" 
+                placeholder="Enter password" 
+                autocomplete="off" 
+                required 
+            > 
+ 
+            <button 
+                type="submit" 
+                class="password-button" 
+            > 
+                ENTER 
+            </button> 
+ 
+        </form> 
+ 
+        <p 
+            id="password-error" 
+            class="password-error" 
+            aria-live="polite" 
+        ></p> 
+ 
+    </div> 
+ 
+</div> 
+     
+
+    <iframe
+        name="google-feedback-frame"
+        style="display:none;">
+    </iframe>
+
+    <main class="page"> 
+ 
+    <div class="sunflower sunflower-1" aria-hidden="true">🌻</div> 
+    <div class="sunflower sunflower-2" aria-hidden="true">🌻</div> 
+    <div class="sunflower sunflower-extra-1" aria-hidden="true">🌻</div>
+    <div class="sunflower sunflower-extra-2" aria-hidden="true">🌻</div> 
+    <div class="sunflower sunflower-3" aria-hidden="true">🌻</div> 
+    <div class="sunflower sunflower-4" aria-hidden="true">🌻</div> 
+    <div class="sunflower sunflower-5" aria-hidden="true">🌻</div> 
+    <div class="sunflower sunflower-6" aria-hidden="true">🌻</div>
+    <!---->
+
+    <section class="hero">
+        <p class="top-note">
+            for you
+        </p>
+        <h1>
+            A Little <br> Something
+        </h1>
+        <p class="intro">
+            I wanted to have this.
+        </p>
+        <div class="scroll-arrow" aria-hidden="true">↓</div>
+
+    </section>
+</section>
+<!-- =========================================
+     FUTURE SURPRISE
+========================================= -->
+
+<section class="surprise-section" id="surprise-section">
+
+    <div class="letter-stage" id="letter-stage">
+
+        <!-- =================================
+             SEALED LETTER
+        ================================== -->
+
+        <div class="sealed-letter" id="letter-locked">
+
+            <div class="envelope-icon" aria-hidden="true">
+                ✉️
+            </div>
+
+            <p class="section-label">
+                A LITTLE MORE
+            </p>
+
+            <h2>
+                A Letter For You
+            </h2>
+
+            <p class="sealed-copy">
+                There is something here,
+                but it is not ready yet.
+            </p>
+
+            <div class="sealed-date">
+                SEALED UNTIL 15/10/2026
+            </div>
+
+            <div class="sealed-lock">
+                🔒
+            </div>
+
+        </div>
+
+
+        <!-- =================================
+             LETTER READY
+        ================================== -->
+
+        <div
+            class="letter-ready"
+            id="letter-ready"
+            style="display: none;"
+        >
+
+            <div class="envelope-icon" aria-hidden="true">
+                ✉️
+            </div>
+
+            <p class="section-label">
+                THE WAIT IS OVER
+            </p>
+
+            <h2>
+                The Letter Is Ready
+            </h2>
+
+            <p class="sealed-copy">
+                Some words were meant to be opened
+                on this day.
+            </p>
+
+            <button
+                type="button"
+                class="letter-open-button"
+                id="open-letter-button"
+            >
+                OPEN LETTER
+            </button>
+
+        </div>
+
+
+        <!-- =================================
+             COUNTDOWN
+             HIDDEN UNTIL LETTER IS OPENED
+        ================================== -->
+
+        <div
+            class="countdown-stage"
+            id="countdown-section"
+            style="display: none;"
+        >
+
+            <div
+                class="mystery-reveal"
+                aria-hidden="true"
+            >
+
+                <div class="mystery-glow"></div>
+
+                <div class="mystery-silhouette"></div>
+
+            </div>
+
+
+            <p class="mystery-eyebrow">
+                SOMETHING ELSE IS WAITING...
+            </p>
+
+
+            <h2>
+                Your Next Surprise
+            </h2>
+
+
+            <p class="countdown-copy">
+                The next chapter begins when
+                the countdown reaches zero.
+            </p>
+
+
+            <div
+                class="countdown"
+                aria-label="Countdown to the next surprise"
+            >
+
+                <div class="countdown-unit">
+
+                    <span id="countdown-days">
+                        21
+                    </span>
+
+                    <small>
+                        DAYS
+                    </small>
+
+                </div>
+
+
+                <div class="countdown-separator">
+                    :
+                </div>
+
+
+                <div class="countdown-unit">
+
+                    <span id="countdown-hours">
+                        00
+                    </span>
+
+                    <small>
+                        HOURS
+                    </small>
+
+                </div>
+
+
+                <div class="countdown-separator">
+                    :
+                </div>
+
+
+                <div class="countdown-unit">
+
+                    <span id="countdown-minutes">
+                        00
+                    </span>
+
+                    <small>
+                        MINUTES
+                    </small>
+
+                </div>
+
+
+                <div class="countdown-separator">
+                    :
+                </div>
+
+
+                <div class="countdown-unit">
+
+                    <span id="countdown-seconds">
+                        00
+                    </span>
+
+                    <small>
+                        SECONDS
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================
+             FUTURE MESSAGE
+             APPEARS AFTER 21 DAYS
+        ================================== -->
+
+        <div
+            class="future-message"
+            id="future-message"
+            style="display: none;"
+        >
+
+            <div class="mystery-eyebrow">
+                THE WAIT IS OVER
+            </div>
+
+
+            <h2>
+                One More Thing.
+            </h2>
+
+
+            <p class="future-intro">
+                A message from the future,
+                finally ready for you.
+            </p>
+
+
+            <div class="future-video-container">
+
+                <video
+                    id="future-video"
+                    controls
+                    playsinline
+                    preload="metadata"
+                >
+
+                    <source
+                        src="assets/future-message.mp4"
+                        type="video/mp4"
+                    >
+
+                    Your browser does not support
+                    video playback.
+
+                </video>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================
+             LETTER CONTENT
+        ================================== -->
+
+        <article
+            class="letter-content"
+            id="letter-content"
+            style="display: none;"
+        >
+
+            <div class="letter-paper">
+
+                <p class="letter-date">
+                    15 October 2026
+                </p>
+
+
+                <h2>
+                    For You
+                </h2>
+
+
+                <!--
+                    REPLACE THIS TEMPORARY TEXT
+                    WITH YOUR REAL LETTER LATER.
+                -->
+
+                <p>
+                    There are some things I wanted
+                    to say properly, without rushing
+                    them or hiding them between
+                    ordinary moments.
+                </p>
+
+
+                <p>
+                    So I left these words here for you,
+                    waiting for the right day.
+                    Take your time reading them.
+                </p>
+
+
+                <p>
+                    Whatever comes next, I hope this
+                    little surprise makes you smile.
+                </p>
+
+
+                <p class="letter-signature">
+                    With love,<br>
+                    Someone who made this
+                    just for you.
+                </p>
+
+            </div>
+
+        </article>
+
+    </div>
+
+</section>
+
+        <!-- ========================= 
+             MESSAGE 
+        ========================== --> 
+ 
+        <section class="intro-message"> 
+ 
+            <div class="flower-divider"> 
+                
+ 
+ 
+ 
+            </div> 
+ 
+ 
+            <p> 
+                Some things are difficult 
+                to put into words. 
+            </p> 
+ 
+ 
+            <p> 
+                So I decided to put 
+                them into art instead. 
+            </p> 
+ 
+ 
+            <p class="final-line"> 
+                Take your time. 
+            </p> 
+ 
+        </section> 
+ 
+ 
+ 
+        <!-- ========================= 
+             ARTWORK 
+        ========================== --> 
+ 
+        <section class="artwork-section"> 
+ 
+ 
+            <p class="section-label"> 
+                THE ARTWORK 
+            </p> 
+ 
+ 
+            <div class="video-container"> 
+ 
+                <video 
+                    id="art-video" 
+                    controls 
+                    playsinline 
+                    preload="metadata" 
+                > 
+ 
+                    <source 
+                        src="assets/artwork.mp4" 
+                        type="video/mp4" 
+                    > 
+ 
+                    Your browser does not support 
+                    video playback. 
+ 
+                </video> 
+ 
+            </div> 
+ 
+ 
+ 
+            <!-- VIDEO DOWNLOAD --> 
+ 
+            <a 
+                type="button"
+                class="heart-download"
+                id="download-video" 
+                aria-label="Download artwork video" 
+            > 
+ 
+                <span class="heart"> 
+                    ♥ 
+                </span> 
+ 
+                <span class="download-text"> 
+                    DOWNLOAD VIDEO 
+                </span> 
+ 
+            </a> 
+ 
+ 
+        </section> 
+ 
+ 
+ 
+        <!-- ========================= 
+             FEEDBACK 
+        ========================== --> 
+ 
+        <section class="feedback-section"> 
+ 
+ 
+            <div class="flower-divider"> 
+                
+ 
+ 
+ 
+            </div> 
+ 
+ 
+            <p class="section-label"> 
+                YOUR THOUGHTS 
+            </p> 
+ 
+ 
+            <h2> 
+                Tell me about<br> 
+                the art. 
+            </h2> 
+ 
+ 
+            <p class="feedback-intro"> 
+                Write whatever came to your mind 
+                when you saw it. 
+            </p> 
+ 
+ 
+ 
+            <!-- ===================== 
+                 FEEDBACK FORM 
+            ====================== --> 
+ 
+            <form 
+                id="feedback-form" 
+                class="feedback-form" 
+            > 
+ 
+ 
+                <textarea 
+                    id="feedback" 
+                    name="feedback" 
+                    placeholder="Write your message here..." 
+                    maxlength="2000" 
+                    required 
+                ></textarea> 
+ 
+ 
+                <div class="character-count"> 
+ 
+                    <span id="character-count"> 
+                        0 
+                    </span> 
+ 
+                    / 2000 
+ 
+                </div> 
+ 
+ 
+                <button 
+                    type="submit" 
+                    class="submit-button" 
+                    id="submit-button" 
+                > 
+                    SUBMIT 
+ 
+                </button> 
+ 
+ 
+            </form> 
+ 
+ 
+ 
+            <!-- ===================== 
+                 THANK YOU 
+            ====================== --> 
+ 
+            <div 
+                id="thank-you" 
+                class="thank-you" 
+            > 
+ 
+                <div class="thank-you-flower"> 
+                    
+ 
+ 
+ 
+                </div> 
+ 
+ 
+                <h2> 
+                    Thank you. 
+                </h2> 
+ 
+ 
+                <p> 
+                    Thank you for your feedback. 
+                </p> 
+ 
+ 
+                <p> 
+                    Your message has been received. 
+                </p> 
+ 
+ 
+            </div> 
+ 
+ 
+        </section> 
+ 
+ 
+ 
+        <!-- ========================= 
+             FOOTER 
+        ========================== --> 
+ 
+        <footer> 
+ 
+            <p> 
+                Some gifts don't need a name. 
+            </p> 
+ 
+        </footer> 
+ 
+ 
+    </main> 
+ 
+ 
+ 
+    <!-- JAVASCRIPT --> 
+ 
+    <script src="script.js"></script> 
+ 
+ 
+</body> 
+ 
+</html> 
