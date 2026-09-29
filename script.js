@@ -2,209 +2,108 @@
    PASSWORD PROTECTION
 ========================================= */
 
-(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
-    "use strict";
+    const passwordScreen =
+        document.getElementById("password-screen");
 
-    const PASSWORD = "sunflower";
+    const passwordForm =
+        document.getElementById("password-form");
 
+    const passwordInput =
+        document.getElementById("password-input");
 
-    function setupPassword() {
+    const passwordError =
+        document.getElementById("password-error");
 
-        const passwordScreen =
-            document.getElementById("password-screen");
-
-        const passwordForm =
-            document.getElementById("password-form");
-
-        const passwordInput =
-            document.getElementById("password-input");
-
-        const passwordError =
-            document.getElementById("password-error");
+    const correctPassword =
+        "sunflower";
 
 
-        /*
-         * If the password HTML isn't present,
-         * don't interfere with the rest of the site.
-         */
+    /* LOCK BACKGROUND PAGE */
 
-        if (
-            !passwordScreen ||
-            !passwordForm ||
-            !passwordInput
-        ) {
-            return;
-        }
+    if (passwordScreen) {
+        document.body.classList.add("password-locked");
+        document.documentElement.classList.add("password-locked");
+    }
 
 
-        /*
-         * Keep the website locked while the
-         * password screen is visible.
-         */
-
-        document.documentElement.classList.add(
-            "password-locked"
-        );
-
-        document.body.classList.add(
-            "password-locked"
-        );
+    if (!passwordForm) {
+        return;
+    }
 
 
-        /*
-         * Prevent duplicate submit handlers.
-         */
+    passwordForm.addEventListener(
+        "submit",
+        function (event) {
 
-        if (
-            passwordForm.dataset.passwordReady === "true"
-        ) {
-            return;
-        }
-
-        passwordForm.dataset.passwordReady = "true";
+            event.preventDefault();
+            event.stopPropagation();
 
 
-        passwordForm.addEventListener(
-            "submit",
-            function (event) {
-
-                event.preventDefault();
-                event.stopPropagation();
+            const enteredPassword =
+                passwordInput.value.trim();
 
 
-                const enteredPassword =
-                    passwordInput.value;
+            if (
+                enteredPassword ===
+                correctPassword
+            ) {
+
+                passwordScreen.classList.add(
+                    "hidden"
+                );
 
 
-                /*
-                 * Exact password comparison.
-                 *
-                 * No trimming, so only the actual
-                 * password "sunflower" is accepted.
-                 */
+                document.body.classList.remove(
+                    "password-locked"
+                );
 
-                if (
-                    enteredPassword === PASSWORD
-                ) {
-
-                    /*
-                     * Hide the password screen
-                     * immediately.
-                     */
-
-                    passwordScreen.classList.add(
-                        "hidden"
-                    );
+                document.documentElement.classList.remove(
+                    "password-locked"
+                );
 
 
-                    /*
-                     * Unlock the page.
-                     */
+                setTimeout(
+                    function () {
 
-                    document.documentElement.classList.remove(
-                        "password-locked"
-                    );
+                        if (
+                            passwordScreen &&
+                            passwordScreen.parentNode
+                        ) {
 
-                    document.body.classList.remove(
-                        "password-locked"
-                    );
+                            passwordScreen.remove();
 
+                        }
 
-                    /*
-                     * Clear any previous error.
-                     */
-
-                    if (passwordError) {
-
-                        passwordError.textContent =
-                            "";
-
-                    }
+                    },
+                    100
+                );
 
 
-                    /*
-                     * Clear the input.
-                     */
-
-                    passwordInput.value = "";
+                passwordInput.value = "";
 
 
-                    /*
-                     * Remove the password overlay
-                     * after the hide animation.
-                     */
+            } else {
 
-                    setTimeout(
-                        function () {
+                if (passwordError) {
 
-                            if (
-                                passwordScreen &&
-                                passwordScreen.parentNode
-                            ) {
-
-                                passwordScreen.parentNode.removeChild(
-                                    passwordScreen
-                                );
-
-                            }
-
-                        },
-                        350
-                    );
-
-
-                } else {
-
-                    /*
-                     * Wrong password.
-                     */
-
-                    if (passwordError) {
-
-                        passwordError.textContent =
-                            "That's not the password. Try again.";
-
-                    }
-
-
-                    passwordInput.value = "";
-
-                    passwordInput.focus();
+                    passwordError.textContent =
+                        "That's not the password. Try again.";
 
                 }
 
-            },
-            false
-        );
+                passwordInput.value = "";
 
-    }
+                passwordInput.focus();
 
-
-    /*
-     * Works whether this script is loaded
-     * before or after the HTML.
-     */
-
-    if (
-        document.readyState === "loading"
-    ) {
-
-        document.addEventListener(
-            "DOMContentLoaded",
-            setupPassword,
-            {
-                once: true
             }
-        );
 
-    } else {
+        }
+    );
 
-        setupPassword();
+});
 
-    }
-
-})();
 
 /* =========================================
    SEALED LETTER + 21 DAY SURPRISE
@@ -213,65 +112,64 @@
 document.addEventListener("DOMContentLoaded", function () {
 
     const letterSection =
-        document.getElementById("letter-section");
+        document.getElementById(
+            "letter-section"
+        );
 
     const letterLocked =
-        document.getElementById("letter-locked");
+        document.getElementById(
+            "letter-locked"
+        );
 
     const letterReady =
-        document.getElementById("letter-ready");
+        document.getElementById(
+            "letter-ready"
+        );
 
     const openLetterButton =
-        document.getElementById("open-letter-button");
+        document.getElementById(
+            "open-letter-button"
+        );
 
     const letterContent =
-        document.getElementById("letter-content");
+        document.getElementById(
+            "letter-content"
+        );
 
     const countdownSection =
-        document.getElementById("countdown-section");
+        document.getElementById(
+            "countdown-section"
+        );
 
     const futureMessage =
-        document.getElementById("future-message");
+        document.getElementById(
+            "future-message"
+        );
 
     const countdownDays =
-        document.getElementById("countdown-days");
+        document.getElementById(
+            "countdown-days"
+        );
 
     const countdownHours =
-        document.getElementById("countdown-hours");
+        document.getElementById(
+            "countdown-hours"
+        );
 
     const countdownMinutes =
-        document.getElementById("countdown-minutes");
+        document.getElementById(
+            "countdown-minutes"
+        );
 
     const countdownSeconds =
-        document.getElementById("countdown-seconds");
+        document.getElementById(
+            "countdown-seconds"
+        );
 
 
     /*
-     * IMPORTANT:
-     *
-     * Letter unlocks automatically on:
-     *
-     * 15 October 2026
-     *
-     * The date is interpreted using the visitor's
-     * local device time.
-     */
-
-    const LETTER_UNLOCK_DATE =
-        new Date("2026-10-15T00:00:00");
-
-
-    /*
-     * 21 days after the person opens the letter.
-     */
-
-    const COUNTDOWN_DURATION =
-        21 * 24 * 60 * 60 * 1000;
-
-
-    /*
-     * If the surprise HTML isn't present yet,
-     * leave the existing website untouched.
+     * If the new HTML has not been added,
+     * leave the original website alone.
      */
 
     if (
@@ -285,7 +183,40 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================================
-       DATE CHECK
+       LETTER UNLOCK DATE
+    ========================================= */
+
+    const LETTER_UNLOCK_DATE =
+        new Date(
+            "2026-10-15T00:00:00"
+        );
+
+
+    /* =========================================
+       21 DAY COUNTDOWN
+    ========================================= */
+
+    const COUNTDOWN_DURATION =
+        21 *
+        24 *
+        60 *
+        60 *
+        1000;
+
+
+    /* =========================================
+       LOCAL STORAGE
+    ========================================= */
+
+    const LETTER_OPENED_KEY =
+        "artGiftLetterOpened";
+
+    const COUNTDOWN_START_KEY =
+        "artGiftCountdownStart";
+
+
+    /* =========================================
+       CHECK LETTER DATE
     ========================================= */
 
     function checkLetterDate() {
@@ -294,7 +225,10 @@ document.addEventListener("DOMContentLoaded", function () {
             new Date();
 
 
-        if (now >= LETTER_UNLOCK_DATE) {
+        if (
+            now >=
+            LETTER_UNLOCK_DATE
+        ) {
 
             letterLocked.style.display =
                 "none";
@@ -319,9 +253,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /*
-     * Check once every minute so that if somebody
-     * already has the website open when midnight
-     * arrives, the letter unlocks automatically.
+     * Automatically check again.
      */
 
     setInterval(
@@ -331,18 +263,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================================
-       LOCAL STORAGE KEYS
-    ========================================= */
-
-    const LETTER_OPENED_KEY =
-        "artGiftLetterOpened";
-
-    const COUNTDOWN_START_KEY =
-        "artGiftCountdownStart";
-
-
-    /* =========================================
-       CHECK EXISTING LETTER STATE
+       GET SAVED COUNTDOWN TIME
     ========================================= */
 
     function getCountdownStart() {
@@ -352,21 +273,31 @@ document.addEventListener("DOMContentLoaded", function () {
                 COUNTDOWN_START_KEY
             );
 
+
         if (!saved) {
             return null;
         }
 
+
         const time =
             Number(saved);
 
-        if (Number.isNaN(time)) {
+
+        if (
+            Number.isNaN(time)
+        ) {
             return null;
         }
+
 
         return time;
 
     }
 
+
+    /* =========================================
+       HAS LETTER BEEN OPENED?
+    ========================================= */
 
     function hasOpenedLetter() {
 
@@ -380,17 +311,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     /* =========================================
-       SHOW LETTER
+       OPEN LETTER
     ========================================= */
 
     function revealLetter() {
 
-        letterReady.style.display =
-            "none";
+        /*
+         * Hide sealed / ready state.
+         */
 
         letterLocked.style.display =
             "none";
 
+        letterReady.style.display =
+            "none";
+
+
+        /*
+         * Show actual letter.
+         */
 
         if (letterContent) {
 
@@ -401,8 +340,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         /*
-         * Save that this visitor has opened
-         * the letter.
+         * Remember that the letter
+         * has been opened.
          */
 
         localStorage.setItem(
@@ -412,8 +351,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         /*
-         * Start the 21-day countdown only
-         * the first time the letter is opened.
+         * Start time is saved only once.
          */
 
         let countdownStart =
@@ -425,6 +363,7 @@ document.addEventListener("DOMContentLoaded", function () {
             countdownStart =
                 Date.now();
 
+
             localStorage.setItem(
                 COUNTDOWN_START_KEY,
                 String(countdownStart)
@@ -434,8 +373,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         /*
-         * Now — and ONLY now — reveal the
-         * countdown above the letter.
+         * Countdown is completely hidden
+         * before the letter is opened.
          */
 
         if (countdownSection) {
@@ -463,10 +402,13 @@ document.addEventListener("DOMContentLoaded", function () {
        COUNTDOWN
     ========================================= */
 
-    let countdownTimer = null;
+    let countdownTimer =
+        null;
 
 
-    function startCountdown(startTime) {
+    function startCountdown(
+        startTime
+    ) {
 
         if (!countdownSection) {
             return;
@@ -488,14 +430,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             const remaining =
-                COUNTDOWN_DURATION - elapsed;
+                COUNTDOWN_DURATION -
+                elapsed;
 
 
             /*
              * Countdown finished.
              */
 
-            if (remaining <= 0) {
+            if (
+                remaining <= 0
+            ) {
 
                 if (countdownTimer) {
 
@@ -503,7 +448,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         countdownTimer
                     );
 
-                    countdownTimer = null;
+                    countdownTimer =
+                        null;
 
                 }
 
@@ -524,7 +470,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const days =
                 Math.floor(
                     totalSeconds /
-                    (24 * 60 * 60)
+                    86400
                 );
 
 
@@ -532,8 +478,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 Math.floor(
                     (
                         totalSeconds %
-                        (24 * 60 * 60)
-                    ) / (60 * 60)
+                        86400
+                    ) / 3600
                 );
 
 
@@ -541,7 +487,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 Math.floor(
                     (
                         totalSeconds %
-                        (60 * 60)
+                        3600
                     ) / 60
                 );
 
@@ -619,7 +565,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* =========================================
        FUTURE MESSAGE
-========================================= */
+    ========================================= */
 
     function showFutureMessage() {
 
@@ -636,7 +582,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
         /*
-         * Show cinematic future message.
+         * Show cinematic video section.
          */
 
         if (futureMessage) {
@@ -644,34 +590,21 @@ document.addEventListener("DOMContentLoaded", function () {
             futureMessage.style.display =
                 "block";
 
-
-            try {
-
-                futureMessage.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                });
-
-            } catch (error) {
-
-                futureMessage.scrollIntoView();
-
-            }
-
         }
 
     }
 
 
     /* =========================================
-       RESTORE STATE AFTER REOPENING WEBSITE
+       RESTORE AFTER REOPENING
     ========================================= */
 
-    if (hasOpenedLetter()) {
+    if (
+        hasOpenedLetter()
+    ) {
 
         /*
          * Letter has already been opened.
-         * Do not show the sealed state again.
          */
 
         letterLocked.style.display =
@@ -696,7 +629,8 @@ document.addEventListener("DOMContentLoaded", function () {
         if (savedStart) {
 
             const elapsed =
-                Date.now() - savedStart;
+                Date.now() -
+                savedStart;
 
 
             if (
@@ -718,7 +652,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
-
 });
 
 
@@ -727,19 +660,29 @@ document.addEventListener("DOMContentLoaded", function () {
 ========================================= */
 
 const form =
-    document.getElementById("feedback-form");
+    document.getElementById(
+        "feedback-form"
+    );
 
 const feedback =
-    document.getElementById("feedback");
+    document.getElementById(
+        "feedback"
+    );
 
 const characterCount =
-    document.getElementById("character-count");
+    document.getElementById(
+        "character-count"
+    );
 
 const thankYou =
-    document.getElementById("thank-you");
+    document.getElementById(
+        "thank-you"
+    );
 
 const submitButton =
-    document.getElementById("submit-button");
+    document.getElementById(
+        "submit-button"
+    );
 
 
 /* =========================================
@@ -773,7 +716,8 @@ if (
 
 
 /* =========================================
-   CROSS-BROWSER FEEDBACK SUBMISSION
+   FEEDBACK SUBMISSION
+   CROSS-BROWSER VERSION
 ========================================= */
 
 if (
@@ -794,6 +738,10 @@ if (
                 feedback.value.trim();
 
 
+            /*
+             * Do not submit empty messages.
+             */
+
             if (!message) {
 
                 alert(
@@ -806,6 +754,10 @@ if (
 
             }
 
+
+            /*
+             * Prevent double tapping.
+             */
 
             if (
                 submitButton.disabled
@@ -823,27 +775,28 @@ if (
                 "SENDING...";
 
 
+            /* =====================================
+               METHOD 1
+               navigator.sendBeacon
+            ===================================== */
+
             let beaconSent =
                 false;
 
-
-            /*
-             * FIRST METHOD:
-             * sendBeacon
-             */
 
             try {
 
                 if (
                     navigator.sendBeacon &&
-                    typeof Blob !== "undefined"
+                    typeof Blob !==
+                        "undefined"
                 ) {
 
-                    const data =
+                    const formData =
                         new URLSearchParams();
 
 
-                    data.append(
+                    formData.append(
                         "message",
                         message
                     );
@@ -852,7 +805,7 @@ if (
                     const blob =
                         new Blob(
                             [
-                                data.toString()
+                                formData.toString()
                             ],
                             {
                                 type:
@@ -872,7 +825,7 @@ if (
             } catch (error) {
 
                 console.log(
-                    "Beacon failed.",
+                    "Beacon failed. Using form fallback.",
                     error
                 );
 
@@ -882,10 +835,10 @@ if (
             }
 
 
-            /*
-             * SECOND METHOD:
-             * Native HTML POST fallback
-             */
+            /* =====================================
+               METHOD 2
+               NORMAL HTML FORM FALLBACK
+            ===================================== */
 
             if (!beaconSent) {
 
@@ -900,8 +853,10 @@ if (
                     iframe.name =
                         "feedback-submit-frame";
 
+
                     iframe.style.display =
                         "none";
+
 
                     iframe.setAttribute(
                         "aria-hidden",
@@ -923,11 +878,14 @@ if (
                     submitForm.method =
                         "POST";
 
+
                     submitForm.action =
                         FEEDBACK_URL;
 
+
                     submitForm.target =
                         "feedback-submit-frame";
+
 
                     submitForm.style.display =
                         "none";
@@ -942,8 +900,10 @@ if (
                     messageInput.type =
                         "hidden";
 
+
                     messageInput.name =
                         "message";
+
 
                     messageInput.value =
                         message;
@@ -959,13 +919,22 @@ if (
                     );
 
 
+                    /*
+                     * Native browser submission.
+                     */
+
                     submitForm.submit();
 
+
+                    /*
+                     * Clean up later.
+                     */
 
                     setTimeout(
                         function () {
 
                             if (
+                                submitForm &&
                                 submitForm.parentNode
                             ) {
 
@@ -975,6 +944,7 @@ if (
 
 
                             if (
+                                iframe &&
                                 iframe.parentNode
                             ) {
 
@@ -998,6 +968,7 @@ if (
                     submitButton.disabled =
                         false;
 
+
                     submitButton.textContent =
                         "SUBMIT";
 
@@ -1014,19 +985,24 @@ if (
             }
 
 
-            /*
-             * Show thank-you after the browser
-             * has accepted the submission.
-             */
+            /* =====================================
+               SHOW THANK YOU
+            ===================================== */
 
             setTimeout(
                 function () {
+
+                    /*
+                     * Clear message.
+                     */
 
                     feedback.value =
                         "";
 
 
-                    if (characterCount) {
+                    if (
+                        characterCount
+                    ) {
 
                         characterCount.textContent =
                             "0";
@@ -1034,11 +1010,21 @@ if (
                     }
 
 
+                    /*
+                     * Hide form.
+                     */
+
                     form.style.display =
                         "none";
 
 
-                    if (thankYou) {
+                    /*
+                     * Show thank-you.
+                     */
+
+                    if (
+                        thankYou
+                    ) {
 
                         thankYou.style.display =
                             "block";
@@ -1046,10 +1032,14 @@ if (
 
                         try {
 
-                            thankYou.scrollIntoView({
-                                behavior: "smooth",
-                                block: "center"
-                            });
+                            thankYou.scrollIntoView(
+                                {
+                                    behavior:
+                                        "smooth",
+                                    block:
+                                        "center"
+                                }
+                            );
 
                         } catch (error) {
 
@@ -1060,121 +1050,4 @@ if (
                     }
 
 
-                    submitButton.disabled =
-                        false;
-
-                    submitButton.textContent =
-                        "SUBMIT";
-
-
-                },
-                1500
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================
-   VIDEO DOWNLOAD
-========================================= */
-
-const downloadVideo =
-    document.getElementById(
-        "download-video"
-    );
-
-
-if (downloadVideo) {
-
-    downloadVideo.addEventListener(
-        "click",
-        async function () {
-
-            try {
-
-                downloadVideo.disabled =
-                    true;
-
-
-                const originalText =
-                    downloadVideo.querySelector(
-                        ".download-text"
-                    );
-
-
-                if (originalText) {
-
-                    originalText.textContent =
-                        "DOWNLOADING...";
-
-                }
-
-
-                const response =
-                    await fetch(
-                        "assets/artwork.mp4"
-                    );
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        "Video could not be found."
-                    );
-
-                }
-
-
-                const blob =
-                    await response.blob();
-
-
-                const url =
-                    URL.createObjectURL(
-                        blob
-                    );
-
-
-                const link =
-                    document.createElement(
-                        "a"
-                    );
-
-
-                link.href =
-                    url;
-
-                link.download =
-                    "artwork.mp4";
-
-
-                document.body.appendChild(
-                    link
-                );
-
-
-                link.click();
-
-
-                link.remove();
-
-
-                URL.revokeObjectURL(
-                    url
-                );
-
-
-                if (originalText) {
-
-                    originalText.textContent =
-                        "VIDEO DOWNLOADED";
-
-                }
-
-
-            } catch (error) {
-
-            
+                    submitButton.di
