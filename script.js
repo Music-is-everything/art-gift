@@ -1,186 +1,123 @@
+document.addEventListener("DOMContentLoaded", function () {
+
+    const passwordScreen =
+        document.getElementById("password-screen");
+
+    const passwordForm =
+        document.getElementById("password-form");
+
+    const passwordInput =
+        document.getElementById("password-input");
+
+    const passwordError =
+        document.getElementById("password-error");
+
+    const correctPassword = "sunflower";
+
+
+    /* LOCK BACKGROUND PAGE */
+    document.body.classList.add("password-locked");
+    document.documentElement.classList.add("password-locked");
+
+
+    passwordForm.addEventListener("submit", function (event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const enteredPassword =
+            passwordInput.value.trim();
+
+        if (enteredPassword === correctPassword) {
+
+            passwordScreen.classList.add("hidden");
+
+            document.body.classList.remove("password-locked");
+            document.documentElement.classList.remove("password-locked");
+
+            setTimeout(function () {
+                passwordScreen.remove();
+            }, 100);
+
+            passwordInput.value = "";
+
+        } else {
+
+            passwordError.textContent =
+                "That's not the password. Try again.";
+
+            passwordInput.value = "";
+            passwordInput.focus();
+        }
+
+    });
+
+});
+
+
 /* =========================================
-   PASSWORD — FINAL WORKING VERSION
+   PASSWORD PROTECTION
 ========================================= */
 
-(function () {
+document.addEventListener("DOMContentLoaded", function () {
 
-    function startPassword() {
+    const passwordScreen =
+        document.getElementById("password-screen");
 
-        const screen =
-            document.getElementById("password-screen");
+    const passwordForm =
+        document.getElementById("password-form");
 
-        const form =
-            document.getElementById("password-form");
+    const passwordInput =
+        document.getElementById("password-input");
 
-        const input =
-            document.getElementById("password-input");
+    const passwordError =
+        document.getElementById("password-error");
 
-        const error =
-            document.getElementById("password-error");
-
-
-        /* If password HTML isn't present, do nothing. */
-
-        if (!screen || !form || !input) {
-            return;
-        }
+    const correctPassword = "sunflower";
 
 
-        const PASSWORD = "sunflower";
-
-
-        /* Lock the page */
-
-        document.documentElement.style.overflow =
-            "hidden";
-
-        document.body.style.overflow =
-            "hidden";
-
-
-        /*
-         * Prevent this handler from being
-         * installed more than once.
-         */
-
-        if (
-            form.dataset.passwordHandler === "installed"
-        ) {
-            return;
-        }
-
-        form.dataset.passwordHandler =
-            "installed";
-
-
-        form.addEventListener(
-            "submit",
-            function (event) {
-
-                event.preventDefault();
-                event.stopImmediatePropagation();
-
-
-                const entered =
-                    input.value.trim();
-
-
-                /* =========================
-                   CORRECT PASSWORD
-                ========================= */
-
-                if (
-                    entered === PASSWORD
-                ) {
-
-                    /* Hide overlay directly */
-
-                    screen.style.display =
-                        "none";
-
-                    screen.style.visibility =
-                        "hidden";
-
-                    screen.style.pointerEvents =
-                        "none";
-
-
-                    /* Unlock page */
-
-                    document.documentElement.style.overflow =
-                        "";
-
-                    document.body.style.overflow =
-                        "";
-
-
-                    document.documentElement.classList.remove(
-                        "password-locked"
-                    );
-
-                    document.body.classList.remove(
-                        "password-locked"
-                    );
-
-
-                    /* Clear input */
-
-                    input.value = "";
-
-
-                    /* Remove overlay */
-
-                    setTimeout(
-                        function () {
-
-                            if (
-                                screen &&
-                                screen.parentNode
-                            ) {
-
-                                screen.parentNode.removeChild(
-                                    screen
-                                );
-
-                            }
-
-                        },
-                        50
-                    );
-
-
-                } else {
-
-                    /* =========================
-                       WRONG PASSWORD
-                    ========================= */
-
-                    if (error) {
-
-                        error.textContent =
-                            "That's not the password. Try again.";
-
-                    }
-
-                    input.value = "";
-
-                    input.focus();
-
-                }
-
-            },
-            true
-        );
-
+    if (!passwordScreen || !passwordForm) {
+        return;
     }
 
 
-    /*
-     * Your script is loaded at the bottom of
-     * the HTML, but this also works if it is
-     * loaded in the <head>.
-     */
+    passwordForm.addEventListener("submit", function (event) {
 
-    if (
-        document.readyState ===
-        "loading"
-    ) {
+        event.preventDefault();
+        event.stopPropagation();
 
-        document.addEventListener(
-            "DOMContentLoaded",
-            startPassword,
-            {
-                once: true
-            }
-        );
+        const enteredPassword =
+            passwordInput.value.trim();
 
-    } else {
 
-        startPassword();
+        if (enteredPassword === correctPassword) {
 
-    }
+            /* Hide password screen completely */
+            passwordScreen.classList.add("hidden");
 
-})();
+            /* Remove it from the page */
+            setTimeout(function () {
+                passwordScreen.remove();
+            }, 100);
+
+            /* Clear password */
+            passwordInput.value = "";
+
+        } else {
+
+            passwordError.textContent =
+                "That's not the password. Try again.";
+
+            passwordInput.value = "";
+
+            passwordInput.focus();
+
+        }
+
+    });
+
+});
+
 /* =========================================
    SEALED LETTER + 21 DAY SURPRISE
 ========================================= */
