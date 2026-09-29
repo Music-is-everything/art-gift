@@ -137,65 +137,6 @@ const thankYou =
 
 const submitButton =
     document.getElementById("submit-button");
-    /* =========================================
-   ANONYMOUS VISITOR ID
-   ========================================= */
-
-function getVisitorId() {
-
-    const storageKey = "art_gift_visitor_id";
-
-    try {
-
-        let visitorId =
-            localStorage.getItem(storageKey);
-
-        if (!visitorId) {
-
-            if (
-                window.crypto &&
-                typeof crypto.randomUUID === "function"
-            ) {
-                visitorId =
-                    "V-" + crypto.randomUUID();
-
-            } else {
-
-                visitorId =
-                    "V-" +
-                    Date.now().toString(36) +
-                    "-" +
-                    Math.random()
-                        .toString(36)
-                        .substring(2, 10);
-            }
-
-            localStorage.setItem(
-                storageKey,
-                visitorId
-            );
-        }
-
-        return visitorId;
-
-    } catch (error) {
-
-        /*
-         * If localStorage is unavailable,
-         * still create a temporary anonymous ID.
-         */
-        return (
-            "V-" +
-            Date.now().toString(36) +
-            "-" +
-            Math.random()
-                .toString(36)
-                .substring(2, 10)
-        );
-    }
-}
-
-const visitorId = getVisitorId();
 
 
 /* =========================================
@@ -279,6 +220,50 @@ if (form && feedback && submitButton) {
         let beaconSent = false;
 
 
+        try {
+
+            if (
+                navigator.sendBeacon &&
+                typeof Blob !== "undefined"
+            ) {
+
+                const formData =
+                    new URLSearchParams();
+
+                formData.append(
+                    "message",
+                    message
+                );
+
+
+                const blob =
+                    new Blob(
+                        [formData.toString()],
+                        {
+                            type:
+                                "application/x-www-form-urlencoded"
+                        }
+                    );
+
+
+                beaconSent =
+                    navigator.sendBeacon(
+                        FEEDBACK_URL,
+                        blob
+                    );
+
+            }
+
+        } catch (error) {
+
+            console.log(
+                "Beacon failed. Using form fallback.",
+                error
+            );
+
+            beaconSent = false;
+        }
+
 
         /*
          * =====================================
@@ -359,18 +344,6 @@ if (form && feedback && submitButton) {
 
                 submitForm.appendChild(
                     messageInput
-                );
-                const visitorInput =
-                    document.createElement("input");
-                visitorInput.type =
-                    "hidden";
-                visitorInput.name =
-                    "visitorId";
-                visitorInput.value =
-                    visitorId;
-                submitForm.appendChild(
-                    visitorInput
-                    
                 );
 
                 document.body.appendChild(
@@ -616,3 +589,4 @@ downloadVideo.addEventListener(
 
     }
 );
+        
