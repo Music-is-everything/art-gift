@@ -248,10 +248,10 @@ document.addEventListener("DOMContentLoaded", function () {
     */
 
     const LETTER_UNLOCK_DATE =
-        new Date("2026-10-15T00:00:00+05:30").getTime();
+        new Date("2026-10-01T00:00:00+05:30").getTime();
 
     const COUNTDOWN_DURATION =
-        21 * 24 * 60 * 60 * 1000;
+        1 * 24 * 60 * 60 * 1000;
 
 
     /* ---------------------------------------------------------
