@@ -55,148 +55,368 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+   
+   /* =========================================
+   FEEDBACK SUBMISSION
+   APP + BROWSER COMPATIBLE
+========================================= */
+
+if (
+    form &&
+    feedback &&
+    submitButton
+) {
+
+    form.addEventListener(
+        "submit",
+        function (e) {
+
+            e.preventDefault();
+            e.stopPropagation();
 
 
-    /* =========================================================
-       2. FEEDBACK SYSTEM
-       ========================================================= */
-
-    const feedbackForm = document.getElementById("feedback-form");
-    const feedbackInput = document.getElementById("feedback");
-    const submitButton = document.getElementById("submit-button");
-    const characterCount = document.getElementById("character-count");
-
-    /*
-       Your existing Google Apps Script URL.
-       DO NOT CHANGE unless you create a new deployment.
-    */
-    const GOOGLE_SCRIPT_URL =
-        "https://script.google.com/macros/s/AKfycbxxxWgiIXMYzRotj7ouTVW7WWPYjf38EgKg-FRFd0iicM4ct3niYDAGAhSUHfVuCtqQPg/exec";
+            const message =
+                feedback.value.trim();
 
 
-    /* Character counter */
-
-    if (feedbackInput && characterCount) {
-
-        feedbackInput.addEventListener("input", function () {
-
-            characterCount.textContent =
-                feedbackInput.value.length;
-        });
-    }
-
-
-    /* Submit feedback */
-
-    if (feedbackForm && feedbackInput) {
-
-        feedbackForm.addEventListener("submit", function (event) {
-
-            event.preventDefault();
-
-            const message = feedbackInput.value.trim();
+            /* Do not send empty feedback */
 
             if (!message) {
+
+                alert(
+                    "Please write something about the artwork."
+                );
+
+                feedback.focus();
+
                 return;
             }
 
-            if (submitButton) {
-                submitButton.disabled = true;
-                submitButton.textContent = "SENDING...";
+
+            /* Prevent double tapping */
+
+            if (
+                submitButton.disabled
+            ) {
+
+                return;
             }
 
 
-            /*
-               Send message to Google Apps Script
-            */
+            submitButton.disabled =
+                true;
 
-            const formData = new FormData();
-
-            formData.append("message", message);
+            submitButton.textContent =
+                "SENDING...";
 
 
             /*
-               sendBeacon is used so the request can work
-               even when the page changes/reloads.
-            */
+             * =================================================
+             * METHOD 1
+             *
+             * Normal fetch request.
+             *
+             * This is the primary method for installed apps,
+             * PWAs and normal browsers.
+             * =================================================
+             */
 
-            let sent = false;
+            let fetchStarted =
+                false;
+
 
             try {
 
-                if (navigator.sendBeacon) {
+                const formData =
+                    new URLSearchParams();
 
-                    sent = navigator.sendBeacon(
-                        GOOGLE_SCRIPT_URL,
-                        formData
+                formData.append(
+                    "message",
+                    message
+                );
+
+
+                fetch(
+                    FEEDBACK_URL,
+                    {
+                        method: "POST",
+
+                        body:
+                            formData.toString(),
+
+                        headers: {
+                            "Content-Type":
+                                "application/x-www-form-urlencoded"
+                        },
+
+                        mode: "no-cors",
+
+                        credentials: "omit",
+
+                        keepalive: true
+                    }
+                )
+                .then(function () {
+
+                    fetchStarted = true;
+
+                })
+                .catch(function (error) {
+
+                    console.log(
+                        "Fetch feedback failed:",
+                        error
                     );
-                }
+
+                    /*
+                     * If fetch fails, use the
+                     * native browser form.
+                     */
+
+                    nativeFeedbackSubmit(
+                        message
+                    );
+
+                });
+
+
+                fetchStarted = true;
+
 
             } catch (error) {
 
                 console.log(
-                    "Beacon error:",
+                    "Fetch could not start:",
                     error
                 );
+
+                nativeFeedbackSubmit(
+                    message
+                );
+
             }
 
 
             /*
-               Fallback request
-            */
+             * =================================================
+             * NATIVE FORM FALLBACK
+             *
+             * Used when fetch itself cannot be started.
+             * =================================================
+             */
 
-            if (!sent) {
+            function nativeFeedbackSubmit(
+                feedbackMessage
+            ) {
 
-                fetch(GOOGLE_SCRIPT_URL, {
-                    method: "POST",
-                    body: formData,
-                    mode: "no-cors"
-                }).catch(function (error) {
+                try {
 
-                    console.log(
-                        "Feedback request error:",
+                    const iframe =
+                        document.createElement(
+                            "iframe"
+                        );
+
+
+                    iframe.name =
+                        "feedback-submit-frame-" +
+                        Date.now();
+
+
+                    iframe.style.display =
+                        "none";
+
+
+                    iframe.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+
+
+                    document.body.appendChild(
+                        iframe
+                    );
+
+
+                    const submitForm =
+                        document.createElement(
+                            "form"
+                        );
+
+
+                    submitForm.method =
+                        "POST";
+
+
+                    submitForm.action =
+                        FEEDBACK_URL;
+
+
+                    submitForm.target =
+                        iframe.name;
+
+
+                    submitForm.style.display =
+                        "none";
+
+
+                    const messageInput =
+                        document.createElement(
+                            "input"
+                        );
+
+
+                    messageInput.type =
+                        "hidden";
+
+
+                    messageInput.name =
+                        "message";
+
+
+                    messageInput.value =
+                        feedbackMessage;
+
+
+                    submitForm.appendChild(
+                        messageInput
+                    );
+
+
+                    document.body.appendChild(
+                        submitForm
+                    );
+
+
+                    submitForm.submit();
+
+
+                    /*
+                     * Keep the iframe alive long enough
+                     * for slow mobile connections.
+                     */
+
+                    setTimeout(
+                        function () {
+
+                            if (
+                                submitForm &&
+                                submitForm.parentNode
+                            ) {
+
+                                submitForm.remove();
+
+                            }
+
+
+                            if (
+                                iframe &&
+                                iframe.parentNode
+                            ) {
+
+                                iframe.remove();
+
+                            }
+
+                        },
+                        15000
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Native feedback submission failed:",
                         error
                     );
-                });
+
+                    submitButton.disabled =
+                        false;
+
+                    submitButton.textContent =
+                        "SUBMIT";
+
+                    alert(
+                        "The message could not be sent. Please check your internet connection and try again."
+                    );
+
+                }
+
             }
 
 
             /*
-               Show thank-you screen
-            */
+             * =================================================
+             * SHOW THANK YOU
+             * =================================================
+             *
+             * We don't wait for the Apps Script response
+             * because no-cors intentionally hides that response.
+             */
 
-            setTimeout(function () {
+            setTimeout(
+                function () {
 
-                feedbackForm.style.display = "none";
+                    feedback.value =
+                        "";
 
-                const thankYouSection =
-                    document.getElementById("thank-you-section");
 
-                if (thankYouSection) {
+                    if (
+                        characterCount
+                    ) {
 
-                    thankYouSection.classList.remove("hidden");
+                        characterCount.textContent =
+                            "0";
 
-                    thankYouSection.scrollIntoView({
-                        behavior: "smooth",
-                        block: "center"
-                    });
-                }
+                    }
 
-                feedbackInput.value = "";
 
-                if (characterCount) {
-                    characterCount.textContent = "0";
-                }
+                    form.style.display =
+                        "none";
 
-                if (submitButton) {
-                    submitButton.disabled = false;
-                    submitButton.textContent = "SUBMIT";
-                }
 
-            }, 700);
+                    if (thankYou) {
 
-        });
-    }
+                        thankYou.style.display =
+                            "block";
+
+
+                        try {
+
+                            thankYou.scrollIntoView({
+                                behavior: "smooth",
+                                block: "center"
+                            });
+
+                        } catch (error) {
+
+                            thankYou.scrollIntoView();
+
+                        }
+
+                    }
+
+
+                    submitButton.disabled =
+                        false;
+
+
+                    submitButton.textContent =
+                        "SUBMIT";
+
+
+                },
+                1200
+            );
+
+        }
+    );
+
+}
+
+
+    /* =========================================================
+       2. FEEDBACK SYSTEM
+       ========================================================= 
 
 
     /* =========================================================
