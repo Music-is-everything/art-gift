@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
        Google Apps Script Web App
        */
        const GOOGLE_SCRIPT_URL =
-           "https://script.google.com/macros/s/AKfycbzTMYDheR8uDZGbF4jz3JPHbyNVlIC_Zpl-2sWnh59BZ-ycVxdn4G3diDFWsyLlKuQ/exec";
+           "https://script.google.com/macros/s/AKfycbz7Bs7Dg3KHcQynwqLvR58kkvHhcyv9NIf5ij9D-1rLwzsBehn2_w58cF_NbqUHlNwkdg/exec";
 
 
            /* =========================================================
@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                     /*
                                            Safety fallback:
                                                   If this device does not have an ID yet,
-                                                         generate one.
+                                                         nerate one.
                                                              */
                                                                  if (!deviceId) {
 
