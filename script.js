@@ -55,150 +55,247 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+   /* =========================================================
+   2. FEEDBACK SYSTEM
+   ========================================================= */
+
+const feedbackForm = document.getElementById("feedback-form");
+const feedbackInput = document.getElementById("feedback");
+const submitButton = document.getElementById("submit-button");
+const characterCount = document.getElementById("character-count");
+
+/*
+   Google Apps Script Web App
+*/
+const GOOGLE_SCRIPT_URL =
+    "https://script.google.com/macros/s/AKfycbzTMYDheR8uDZGbF4jz3JPHbyNVlIC_Zpl-2sWnh59BZ-ycVxdn4G3diDFWsyLlKuQ/exec";
 
 
-    /* =========================================================
-       2. FEEDBACK SYSTEM
-       ========================================================= */
+/* =========================================================
+   DEVICE ID
+   Uses the SAME Device ID created by the Instructions app.
+   ========================================================= */
 
-    const feedbackForm = document.getElementById("feedback-form");
-    const feedbackInput = document.getElementById("feedback");
-    const submitButton = document.getElementById("submit-button");
-    const characterCount = document.getElementById("character-count");
+function getDeviceId() {
+
+    let deviceId =
+        localStorage.getItem("private_device_id");
 
     /*
-       Your existing Google Apps Script URL.
-       DO NOT CHANGE unless you create a new deployment.
+       Safety fallback:
+       If this device does not have an ID yet,
+       generate one.
     */
-    const GOOGLE_SCRIPT_URL =
-        "https://script.google.com/macros/s/AKfycbxxxWgiIXMYzRotj7ouTVW7WWPYjf38EgKg-FRFd0iicM4ct3niYDAGAhSUHfVuCtqQPg/exec";
+    if (!deviceId) {
+
+        const randomPart =
+            crypto.randomUUID()
+                .replace(/-/g, "")
+                .substring(0, 12)
+                .toUpperCase();
+
+        deviceId =
+            randomPart.substring(0, 4) + "-" +
+            randomPart.substring(4, 8) + "-" +
+            randomPart.substring(8, 12);
+
+        localStorage.setItem(
+            "private_device_id",
+            deviceId
+        );
+    }
+
+    return deviceId;
+}
 
 
-    /* Character counter */
+/* =========================================================
+   CHARACTER COUNTER
+   ========================================================= */
 
-    if (feedbackInput && characterCount) {
+if (feedbackInput && characterCount) {
 
-        feedbackInput.addEventListener("input", function () {
+    feedbackInput.addEventListener(
+        "input",
+        function () {
 
             characterCount.textContent =
                 feedbackInput.value.length;
-        });
-    }
+
+        }
+    );
+}
 
 
-    /* Submit feedback */
+/* =========================================================
+   SUBMIT FEEDBACK
+   ========================================================= */
 
-    if (feedbackForm && feedbackInput) {
+if (feedbackForm && feedbackInput) {
 
-        feedbackForm.addEventListener("submit", function (event) {
+    feedbackForm.addEventListener(
+        "submit",
+        async function (event) {
 
             event.preventDefault();
 
-            const message = feedbackInput.value.trim();
+            const message =
+                feedbackInput.value.trim();
 
             if (!message) {
                 return;
             }
 
+
+            /* Get the existing Device ID */
+            const deviceId =
+                getDeviceId();
+
+
+            /* Disable button while sending */
             if (submitButton) {
+
                 submitButton.disabled = true;
-                submitButton.textContent = "SENDING...";
+
+                submitButton.textContent =
+                    "SENDING...";
+
             }
 
 
             /*
-               Send message to Google Apps Script
+               Send message + Device ID.
+
+               URLSearchParams keeps the request simple
+               and works well with Google Apps Script.
             */
 
-            const formData = new FormData();
+            const formData =
+                new URLSearchParams();
 
-            formData.append("message", message);
+            formData.append(
+                "message",
+                message
+            );
 
+            formData.append(
+                "deviceId",
+                deviceId
+            );
 
-            /*
-               sendBeacon is used so the request can work
-               even when the page changes/reloads.
-            */
-
-            let sent = false;
 
             try {
 
-                if (navigator.sendBeacon) {
+                /*
+                   Send to Google Apps Script.
 
-                    sent = navigator.sendBeacon(
-                        GOOGLE_SCRIPT_URL,
-                        formData
-                    );
-                }
+                   no-cors is intentional because
+                   Google Apps Script does not need to
+                   expose CORS headers for this use.
+                */
 
-            } catch (error) {
-
-                console.log(
-                    "Beacon error:",
-                    error
+                await fetch(
+                    GOOGLE_SCRIPT_URL,
+                    {
+                        method: "POST",
+                        mode: "no-cors",
+                        body: formData,
+                        keepalive: true
+                    }
                 );
-            }
 
 
-            /*
-               Fallback request
-            */
+                /*
+                   Give the request time to leave the device
+                   before changing the page.
+                */
 
-            if (!sent) {
-
-                fetch(GOOGLE_SCRIPT_URL, {
-                    method: "POST",
-                    body: formData,
-                    mode: "no-cors"
-                }).catch(function (error) {
-
-                    console.log(
-                        "Feedback request error:",
-                        error
-                    );
-                });
-            }
+                await new Promise(
+                    function (resolve) {
+                        setTimeout(resolve, 1000);
+                    }
+                );
 
 
-            /*
-               Show thank-you screen
-            */
+                /*
+                   Show existing thank-you screen.
+                   Nothing else in the page is changed.
+                */
 
-            setTimeout(function () {
-
-                feedbackForm.style.display = "none";
+                feedbackForm.style.display =
+                    "none";
 
                 const thankYouSection =
-                    document.getElementById("thank-you-section");
+                    document.getElementById(
+                        "thank-you-section"
+                    );
 
                 if (thankYouSection) {
 
-                    thankYouSection.classList.remove("hidden");
+                    thankYouSection.classList.remove(
+                        "hidden"
+                    );
 
                     thankYouSection.scrollIntoView({
                         behavior: "smooth",
                         block: "center"
                     });
+
                 }
+
 
                 feedbackInput.value = "";
 
                 if (characterCount) {
-                    characterCount.textContent = "0";
+
+                    characterCount.textContent =
+                        "0";
+
                 }
+
+
+            } catch (error) {
+
+                console.error(
+                    "Feedback submission failed:",
+                    error
+                );
+
+
+                /*
+                   If something actually goes wrong,
+                   don't pretend the message was received.
+                */
 
                 if (submitButton) {
+
                     submitButton.disabled = false;
-                    submitButton.textContent = "SUBMIT";
+
+                    submitButton.textContent =
+                        "TRY AGAIN";
+
                 }
 
-            }, 700);
-
-        });
-    }
+                return;
+            }
 
 
+            /*
+               Restore button state internally.
+            */
+
+            if (submitButton) {
+
+                submitButton.disabled = false;
+
+                submitButton.textContent =
+                    "SUBMIT";
+
+            }
+
+        }
+    );
+}
     /* =========================================================
        3. ARTWORK VIDEO DOWNLOAD
        ========================================================= */
