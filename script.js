@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
        Google Apps Script Web App
        */
        const GOOGLE_SCRIPT_URL =
-           "https://script.google.com/macros/s/AKfycbzTMYDheR8uDZGbF4jz3JPHbyNVlIC_Zpl-2sWnh59BZ-ycVxdn4G3diDFWsyLlKuQ/exec";
+           "https://script.google.com/macros/library/d/1aw3wQJ6OvGOPW6YhTi7arhKlSJ19o23wJh2A6w29smK8F6EcZlW-Z1C2/14";
 
 
            /* =========================================================
