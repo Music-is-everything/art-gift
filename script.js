@@ -82,6 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             characterCount.textContent =
                 feedbackInput.value.length;
+
         });
     }
 
@@ -93,6 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
         feedbackForm.addEventListener("submit", function (event) {
 
             event.preventDefault();
+            event.stopPropagation();
 
             const message = feedbackInput.value.trim();
 
@@ -107,7 +109,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             /*
-               Send message to Google Apps Script
+               Build the same POST data used by the
+               existing Google Apps Script.
             */
 
             const formData = new FormData();
@@ -116,53 +119,162 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             /*
-               sendBeacon is used so the request can work
-               even when the page changes/reloads.
+               Primary method:
+               normal cross-origin POST using fetch().
+               no-cors is intentional because the Apps Script
+               does not need to return readable data.
             */
 
-            let sent = false;
+            let requestStarted = false;
 
             try {
-
-                if (navigator.sendBeacon) {
-
-                    sent = navigator.sendBeacon(
-                        GOOGLE_SCRIPT_URL,
-                        formData
-                    );
-                }
-
-            } catch (error) {
-
-                console.log(
-                    "Beacon error:",
-                    error
-                );
-            }
-
-
-            /*
-               Fallback request
-            */
-
-            if (!sent) {
 
                 fetch(GOOGLE_SCRIPT_URL, {
                     method: "POST",
                     body: formData,
-                    mode: "no-cors"
-                }).catch(function (error) {
+                    mode: "no-cors",
+                    credentials: "omit",
+                    keepalive: true
+                })
+                .then(function () {
+
+                    requestStarted = true;
+
+                })
+                .catch(function (error) {
 
                     console.log(
-                        "Feedback request error:",
+                        "Primary feedback request error:",
                         error
                     );
+
                 });
+
+                requestStarted = true;
+
+            } catch (error) {
+
+                console.log(
+                    "Primary feedback request could not start:",
+                    error
+                );
+
+            }
+
+
+            /*
+               Fallback for browsers / installed web apps
+               where fetch() is restricted.
+
+               A real HTML form submission is used instead of
+               JavaScript XMLHttpRequest/CORS.
+            */
+
+            try {
+
+                const iframe =
+                    document.createElement("iframe");
+
+                iframe.name =
+                    "feedback-submit-frame";
+
+                iframe.style.display =
+                    "none";
+
+                iframe.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+                document.body.appendChild(
+                    iframe
+                );
+
+
+                const fallbackForm =
+                    document.createElement("form");
+
+                fallbackForm.method =
+                    "POST";
+
+                fallbackForm.action =
+                    GOOGLE_SCRIPT_URL;
+
+                fallbackForm.target =
+                    "feedback-submit-frame";
+
+                fallbackForm.style.display =
+                    "none";
+
+
+                const messageField =
+                    document.createElement("input");
+
+                messageField.type =
+                    "hidden";
+
+                messageField.name =
+                    "message";
+
+                messageField.value =
+                    message;
+
+
+                fallbackForm.appendChild(
+                    messageField
+                );
+
+                document.body.appendChild(
+                    fallbackForm
+                );
+
+
+                /*
+                   Submit through the browser's native
+                   form mechanism. This is especially useful
+                   for installed/PWA browser contexts.
+                */
+
+                fallbackForm.submit();
+
+
+                /*
+                   Clean up after the request has had time
+                   to leave the page.
+                */
+
+                setTimeout(function () {
+
+                    if (
+                        fallbackForm &&
+                        fallbackForm.parentNode
+                    ) {
+                        fallbackForm.remove();
+                    }
+
+                    if (
+                        iframe &&
+                        iframe.parentNode
+                    ) {
+                        iframe.remove();
+                    }
+
+                }, 10000);
+
+            } catch (error) {
+
+                console.log(
+                    "Fallback feedback request error:",
+                    error
+                );
+
             }
 
 
             /*
                Show thank-you screen
+               only after giving both submission
+               methods time to start.
             */
 
             setTimeout(function () {
@@ -180,6 +292,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         behavior: "smooth",
                         block: "center"
                     });
+
                 }
 
                 feedbackInput.value = "";
@@ -193,10 +306,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     submitButton.textContent = "SUBMIT";
                 }
 
-            }, 700);
+            }, 1200);
 
         });
     }
+
 
 
     /* =========================================================
@@ -330,6 +444,7 @@ document.addEventListener("DOMContentLoaded", function () {
             showSealedLetter();
 
             return;
+
         }
 
 
@@ -363,6 +478,7 @@ document.addEventListener("DOMContentLoaded", function () {
             showLetterReady();
 
         }
+
     }
 
 
@@ -375,27 +491,33 @@ document.addEventListener("DOMContentLoaded", function () {
         if (sealedLetter) {
 
             sealedLetter.style.display = "";
+
         }
 
         if (openedLetter) {
 
             openedLetter.style.display = "none";
+
         }
 
         if (countdownSection) {
 
             countdownSection.style.display = "none";
+
         }
 
         if (futureVideo) {
 
             futureVideo.style.display = "none";
+
         }
 
         if (letterCard) {
 
             letterCard.style.display = "none";
+
         }
+
     }
 
 
@@ -408,27 +530,33 @@ document.addEventListener("DOMContentLoaded", function () {
         if (sealedLetter) {
 
             sealedLetter.style.display = "none";
+
         }
 
         if (openedLetter) {
 
             openedLetter.style.display = "";
+
         }
 
         if (countdownSection) {
 
             countdownSection.style.display = "none";
+
         }
 
         if (futureVideo) {
 
             futureVideo.style.display = "none";
+
         }
 
         if (letterCard) {
 
             letterCard.style.display = "none";
+
         }
+
 
         /*
            Change text if the elements exist.
@@ -444,13 +572,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
             title.textContent =
                 "THE LETTER IS READY";
+
         }
 
         if (button) {
 
             button.textContent =
                 "OPEN LETTER";
+
         }
+
     }
 
 
@@ -490,6 +621,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         "artGiftCountdownStart",
                         countdownStart
                     );
+
                 }
 
 
@@ -524,6 +656,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             }
         );
+
     }
 
 
@@ -536,12 +669,15 @@ document.addEventListener("DOMContentLoaded", function () {
         if (sealedLetter) {
 
             sealedLetter.style.display = "none";
+
         }
 
         if (openedLetter) {
 
             openedLetter.style.display = "none";
+
         }
+
 
         /*
            Letter should be visible
@@ -550,6 +686,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (letterCard) {
 
             letterCard.style.display = "";
+
         }
 
 
@@ -561,6 +698,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (countdownSection) {
 
             countdownSection.style.display = "";
+
         }
 
 
@@ -571,7 +709,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (futureVideo) {
 
             futureVideo.style.display = "none";
+
         }
+
     }
 
 
@@ -600,6 +740,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "artGiftCountdownStart",
                 countdownStart
             );
+
         }
 
 
@@ -622,6 +763,7 @@ document.addEventListener("DOMContentLoaded", function () {
             clearInterval(
                 window.artGiftCountdownTimer
             );
+
         }
 
 
@@ -631,6 +773,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 updateCountdown(endTime);
 
             }, 1000);
+
     }
 
 
@@ -655,18 +798,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 clearInterval(
                     window.artGiftCountdownTimer
                 );
+
             }
 
 
             if (countdownSection) {
 
                 countdownSection.style.display = "none";
+
             }
 
 
             showFutureMessage();
 
             return;
+
         }
 
 
@@ -705,25 +851,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
             countdownDays.textContent =
                 String(days).padStart(2, "0");
+
         }
 
         if (countdownHours) {
 
             countdownHours.textContent =
                 String(hours).padStart(2, "0");
+
         }
 
         if (countdownMinutes) {
 
             countdownMinutes.textContent =
                 String(minutes).padStart(2, "0");
+
         }
 
         if (countdownSeconds) {
 
             countdownSeconds.textContent =
                 String(seconds).padStart(2, "0");
+
         }
+
     }
 
 
@@ -736,6 +887,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (countdownSection) {
 
             countdownSection.style.display = "none";
+
         }
 
 
@@ -746,6 +898,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (futureVideo) {
 
             futureVideo.style.display = "";
+
         }
 
 
@@ -760,78 +913,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 futureVideo.scrollIntoView({
                     behavior: "smooth",
-                    block: "start"
-                });
-
-            }, 300);
-        }
-    }
-
-
-    /* =========================================================
-       5. VIDEO AUTOPAUSE WHEN NOT VISIBLE
-       ========================================================= */
-
-    const videos =
-        document.querySelectorAll("video");
-
-    if (videos.length > 0) {
-
-        const videoObserver =
-            new IntersectionObserver(
-                function (entries) {
-
-                    entries.forEach(function (entry) {
-
-                        const video =
-                            entry.target;
-
-                        /*
-                           Only pause videos that are
-                           mostly outside the screen.
-                        */
-
-                        if (!entry.isIntersecting) {
-
-                            if (!video.paused) {
-
-                                video.pause();
-                            }
-                        }
-
-                    });
-
-                },
-                {
-                    threshold: 0.15
-                }
-            );
-
-
-        videos.forEach(function (video) {
-
-            videoObserver.observe(video);
-        });
-    }
-
-
-    /* =========================================================
-       6. MOBILE SAFETY
-       ========================================================= */
-
-    /*
-       Prevent accidental horizontal overflow.
-    */
-
-    document.documentElement.style.maxWidth =
-        "100%";
-
-    document.body.style.maxWidth =
-        "100%";
-
-
-    /* =========================================================
-       END
-       ========================================================= */
-
-});
+             
