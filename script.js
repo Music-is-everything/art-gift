@@ -68,7 +68,7 @@ const characterCount = document.getElementById("character-count");
    Google Apps Script Web App
 */
 const GOOGLE_SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbzTMYDheR8uDZGbF4jz3JPHbyNVlIC_Zpl-2sWnh59BZ-ycVxdn4G3diDFWsyLlKuQ/exec";
+    "https://script.google.com/macros/s/AKfycbzy_jBuFpUu0qUehuAJLrL99xXKATUlQr0lQGOyBbQ8OxZdVQADc5Le0T3f9WynXbarvQ/exec";
 
 
 /* =========================================================
