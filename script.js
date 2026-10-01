@@ -63,70 +63,72 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /*
        Google Apps Script Web App
-       */
-       const GOOGLE_SCRIPT_URL =
-           "https://script.google.com/macros/s/AKfycbwvp6KE5QAs0DQkoysOf5n-4DuEWh11I9HnWH92fcMc49yTXHLrT5Bh4h2jE-gYpTYLyA/exec";
+    */
+
+    const GOOGLE_SCRIPT_URL =
+        "https://script.google.com/macros/s/AKfycbwvp6KE5QAs0DQkoysOf5n-4DuEWh11I9HnWH92fcMc49yTXHLrT5Bh4h2jE-gYpTYLyA/exec";
 
 
-           /* =========================================================
-              DEVICE ID
-                 Uses the SAME Device ID created by the Instructions app.
-                    ========================================================= */
+    /* =========================================================
+       2. DEVICE ID
+       Uses the SAME Device ID created by the Instructions app.
+       ========================================================= */
 
-                    function getDeviceId() {
+    function getDeviceId() {
 
-                        let deviceId =
-                                localStorage.getItem("private_device_id");
+        let deviceId =
+            localStorage.getItem("private_device_id");
 
-                                    /*
-                                           Safety fallback:
-                                                  If this device does not have an ID yet,
-                                                         generate one.
-                                                             */
-                                                                 if (!deviceId) {
+        /*
+           Safety fallback:
+           If this device does not have an ID yet,
+           generate one.
+        */
 
-                                                                         const randomPart =
-                                                                                     crypto.randomUUID()
-                                                                                                     .replace(/-/g, "")
-                                                                                                                     .substring(0, 12)
-                                                                                                                                     .toUpperCase();
+        if (!deviceId) {
 
-                                                                                                                                             deviceId =
-                                                                                                                                                         randomPart.substring(0, 4) + "-" +
-                                                                                                                                                                     randomPart.substring(4, 8) + "-" +
-                                                                                                                                                                                 randomPart.substring(8, 12);
+            const randomPart =
+                crypto.randomUUID()
+                    .replace(/-/g, "")
+                    .substring(0, 12)
+                    .toUpperCase();
 
-                                                                                                                                                                                         localStorage.setItem(
-                                                                                                                                                                                                     "private_device_id",
-                                                                                                                                                                                                                 deviceId
-                                                                                                                                                                                                                         );
-                                                                                                                                                                                                                             }
+            deviceId =
+                randomPart.substring(0, 4) + "-" +
+                randomPart.substring(4, 8) + "-" +
+                randomPart.substring(8, 12);
 
-                                                                                                                                                                                                                                 return deviceId;
-                                                                                                                                                                                                                                 }
+            localStorage.setItem(
+                "private_device_id",
+                deviceId
+            );
+        }
 
-
-                                                                                                                                                                                                                                 /* =========================================================
-                                                                                                                                                                                                                                    CHARACTER COUNTER
-                                                                                                                                                                                                                                       ========================================================= */
-
-                                                                                                                                                                                                                                       if (feedbackInput && characterCount) {
-
-                                                                                                                                                                                                                                           feedbackInput.addEventListener(
-                                                                                                                                                                                                                                                   "input",
-                                                                                                                                                                                                                                                           function () {
-
-                                                                                                                                                                                                                                                                       characterCount.textContent =
-                                                                                                                                                                                                                                                                                       feedbackInput.value.length;
-
-                                                                                                                                                                                                                                                                                               }
-                                                                                                                                                                                                                                                                                                   );
-                                                                                                                                                                                                                                                                                                   }
+        return deviceId;
+    }
 
 
-                                                                                                                                                                                                                                                                                                   /* =========================================================
-                                                                                                                                                                                                                                                                                                      SUBMIT FEEDBACK
-                                                                                                                                                                                                                                                                                                         ========================================================= */
+    /* =========================================================
+       CHARACTER COUNTER
+       ========================================================= */
+
+    if (feedbackInput && characterCount) {
+
+        feedbackInput.addEventListener(
+            "input",
+            function () {
+
+                characterCount.textContent =
+                    feedbackInput.value.length;
+
+            }
+        );
+    }
+
+
+    /* =========================================================
+       SUBMIT FEEDBACK
+       ========================================================= */
 
     if (feedbackForm && feedbackInput) {
 
@@ -145,11 +147,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 /* Get the existing Device ID */
+
                 const deviceId =
                     getDeviceId();
 
 
                 /* Disable button while sending */
+
                 if (submitButton) {
 
                     submitButton.disabled = true;
@@ -161,11 +165,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 /*
-                               Send message + Device ID.
+                   Send message + Device ID.
 
-                                              URLSearchParams keeps the request simple
-                                                             and works well with Google Apps Script.
-                                                                         */
+                   URLSearchParams keeps the request simple
+                   and works well with Google Apps Script.
+                */
 
                 const formData =
                     new URLSearchParams();
@@ -184,12 +188,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 try {
 
                     /*
-                                       Send to Google Apps Script.
+                       Send to Google Apps Script.
 
-                                                          no-cors is intentional because
-                                                                             Google Apps Script does not need to
-                                                                                                expose CORS headers for this use.
-                                                                                                                */
+                       no-cors is intentional because
+                       Google Apps Script does not need to
+                       expose CORS headers for this use.
+                    */
 
                     await fetch(
                         GOOGLE_SCRIPT_URL,
@@ -203,9 +207,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                     /*
-                                       Give the request time to leave the device
-                                                          before changing the page.
-                                                                          */
+                       Give the request time to leave the device
+                       before changing the page.
+                    */
 
                     await new Promise(
                         function (resolve) {
@@ -215,9 +219,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                     /*
-                                       Show existing thank-you screen.
-                                                          Nothing else in the page is changed.
-                                                                          */
+                       Show existing thank-you screen.
+                       Nothing else in the page is changed.
+                    */
 
                     feedbackForm.style.display =
                         "none";
@@ -260,9 +264,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                     /*
-                                       If something actually goes wrong,
-                                                          don't pretend the message was received.
-                                                                          */
+                       If something actually goes wrong,
+                       don't pretend the message was received.
+                    */
 
                     if (submitButton) {
 
@@ -278,8 +282,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 /*
-                               Restore button state internally.
-                                           */
+                   Restore button state internally.
+                */
 
                 if (submitButton) {
 
@@ -293,6 +297,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         );
     }
+
+
     /* =========================================================
        3. ARTWORK VIDEO DOWNLOAD
        ========================================================= */
@@ -524,6 +530,7 @@ document.addEventListener("DOMContentLoaded", function () {
             letterCard.style.display = "none";
         }
 
+
         /*
            Change text if the elements exist.
         */
@@ -636,6 +643,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             openedLetter.style.display = "none";
         }
+
 
         /*
            Letter should be visible
@@ -864,9 +872,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* =========================================================
        5. VIDEO AUTOPAUSE WHEN NOT VISIBLE
-       ========================================================= */
-
-    const videos =
+       =======================================================
+       const videos =
         document.querySelectorAll("video");
 
     if (videos.length > 0) {
